@@ -7,24 +7,23 @@ int JudgeDisplay(void);
 
 extern int arrayForInnerBoardLayout[SIZE][SIZE];
 int gameover=0;//游戏结束标示
-int id=1;//先后手
-int x1=-1,y1=-1;
-int x2=-1,y2=-1;//上一次落子
+int id=1;//先后手判断
+int x_1=-1,y_1=-1;//先手上一次落子
+int x_2=-1,y_2=-1;//后手上一次落子
 
 void Move(int x,int y,int id){
+    if(x_1>=0)
+        arrayForInnerBoardLayout[x_1][y_1]=1;
+    if(x_2>=0)
+        arrayForInnerBoardLayout[x_2][y_2]=2;
+        
+    arrayForInnerBoardLayout[x][y]=id+2;
     if(id==1){
-        if(x1>=0 && y1>=0){
-            arrayForInnerBoardLayout[x1][y1]=id;
-        }
-        arrayForInnerBoardLayout[x][y]=id+2;
-        x1=x,y1=y;
-    }else if(id==2){
-        if(x2>=0 && y2>=0){
-            arrayForInnerBoardLayout[x2][y2]=id;
-        }
-        arrayForInnerBoardLayout[x][y]=id+2;
-        x2=x,y2=y;
+        x_1=x,y_1=y;
+    }else{
+        x_2=x,y_2=y;
     }
+    
     innerLayoutToDisplayArray();
     gameover=Judge(x,y)*id;
 }
@@ -88,7 +87,7 @@ int Judge(int x, int y)//判断五连
             }
         }
         if(count>=5)
-            return 1;
+            return 1;//五连
     }
     return 0;
 }

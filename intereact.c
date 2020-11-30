@@ -1,39 +1,92 @@
 #include "gobang.h"
 
-void Player(void);
-void Computer(void);
-int Judge(int x,int y);
-int JudgeDisplay(void);
-
 extern int arrayForInnerBoardLayout[SIZE][SIZE];
+void Move(int x,int y,int id);//落子函数
+void Player(void);//玩家回合
+void Computer(void);//电脑回合
+int JudgeFive(int x,int y);//判断五连
+int JudgeDisplay(void);//输出游戏结果
+
 int gameover=0;//游戏结束标示
-int id=1;//先后手判断
+int id=1;//先后手标示
 int x_1=-1,y_1=-1;//先手上一次落子
 int x_2=-1,y_2=-1;//后手上一次落子
 
-void Move(int x,int y,int id){
+void menu()
+{
+    int m;
+    printf("    ---written by Jolllly---\n");
+    printf("Select mode:\n");
+    printf("1 -pvp\n");
+    printf("2 -pve 玩家先手\n");
+    printf("3 -pve 玩家后手\n");
+    scanf("%d", &m);
+    switch (m)
+    {
+    case 1:
+        displayBoard();
+        while(1)
+        {
+            Player();
+            if(JudgeDisplay()){
+                break;
+            }
+            id=(id==1)?2:1;//切换玩家先后手关系
+        }break;
+    case 2:
+        displayBoard();
+        while (1)
+        {
+            Player();
+            if(JudgeDisplay()){
+                break;
+            }
+            Computer();
+            if(JudgeDisplay()){
+                break;
+            }
+        }break;
+    case 3:
+        while (1)
+        {
+            id=2;//玩家后手
+            Computer();
+            if (JudgeDisplay()){
+                break;
+            }
+            Player();
+            if(JudgeDisplay()){
+                break;
+            }
+        }break;
+    default:
+        break;
+    }
+}
+
+void Move(int x,int y,int id)
+{
     if(x_1>=0)
         arrayForInnerBoardLayout[x_1][y_1]=1;
     if(x_2>=0)
         arrayForInnerBoardLayout[x_2][y_2]=2;
     if(id==1){
-        x_1=x;
-        y_1=y;
+        x_1=x,y_1=y;
     }else{
-        x_2=x;
-        y_2=y;
+        x_2=x,y_2=y;
     }
     arrayForInnerBoardLayout[x][y]=id+2;
     innerLayoutToDisplayArray();
-    gameover=Judge(x,y)*id;
+    displayBoard();
+    gameover=JudgeFive(x,y)*id;
 }
 
-void Player(){
+void Player(void)
+{
     char c;
     int x=0,y=0;
-    displayBoard();
+
     printf("player%d输入坐标:",id);
-    
     while(1){
         scanf("%c %d",&c,&x);
         scanf("%c %d",&c,&x);//一个迷惑的bug
@@ -41,7 +94,7 @@ void Player(){
         y=c-'a';
 
         if(arrayForInnerBoardLayout[x][y]!=0 || x<0 || x>=SIZE || y<0 || y>=SIZE){
-            printf("请重新输入坐标：");
+            printf("请重新输入坐标:");
             continue;
             
         }else{
@@ -52,24 +105,24 @@ void Player(){
     
 }
 
-void Computer(){
+void Computer(void)
+{
     int x,y,cid;
     cid=(id==1)?2:1;
-    displayBoard();
     
     srand(time(NULL));//大猩猩行为
     x=rand()%SIZE;
     y=rand()%SIZE;
-
+    
     Move(x,y,cid);
-
+    printf("电脑选择下在:%c%d\n",y+'A',15-x);
 }
 
 
-int Judge(int x, int y)//判断五连
+int JudgeFive(int x, int y)
 {
     int i, j, k;
-    const int step[4][2]={{1,0},{0,1},{1,1},{1,-1}};
+    const int step[4][2]={{1,0},{0,1},{1,1},{1,-1}};//表示横竖加斜四个方向
     for(i=0;i<4;++i)
     {
         const int d[2]={-1,1};
@@ -87,12 +140,12 @@ int Judge(int x, int y)//判断五连
             }
         }
         if(count>=5)
-            return 1;//五连
+            return 1;//存在五连子
     }
     return 0;
 }
 
-int  JudgeDisplay(void)
+int JudgeDisplay(void)
 {
     /*if(num == SIZE*SIZE)
     {
@@ -113,56 +166,4 @@ int  JudgeDisplay(void)
         return 1;//对局结束
     }
     return 0;
-}
-
-void menu(){
-    int m;
-    printf("1 -pvp\n");
-    printf("2 -pve 玩家先手\n");
-    printf("3 -pve 玩家后手\n");
-    scanf("%d", &m);
-    switch (m)
-    {
-    case 1:
-        while(1)
-        {
-            Player();
-            if(JudgeDisplay()){
-                break;
-            }
-            id=(id==1)?2:1;
-        }
-        break;
-    case 2:
-        while (1)
-        {
-            Player();
-            if(JudgeDisplay()){
-                break;
-            }
-            Computer();
-            if(JudgeDisplay()){
-                break;
-            }
-        }
-        break;
-    case 3:
-        while (1)
-        {
-            id=2;
-            Computer();
-            if (JudgeDisplay())
-            {
-                break;
-            }
-            Player();
-            if(JudgeDisplay()){
-                break;
-            }
-            
-        }
-        break;
-    default:
-        break;
-    }
 }

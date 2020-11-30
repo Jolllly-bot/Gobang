@@ -78,6 +78,12 @@ void innerLayoutToDisplayArray(void){
             }else if(arrayForInnerBoardLayout[i][j]==2){
                 arrayForDisplayBoard[i][CHARSIZE*j]=play2Pic[0];
                 arrayForDisplayBoard[i][CHARSIZE*j+1]=play2Pic[1];
+            }else if(arrayForInnerBoardLayout[i][j]==3){
+                arrayForDisplayBoard[i][CHARSIZE*j]=play1CurrentPic[0];
+                arrayForDisplayBoard[i][CHARSIZE*j+1]=play1CurrentPic[1];
+            }else if(arrayForInnerBoardLayout[i][j]==4){
+                arrayForDisplayBoard[i][CHARSIZE*j]=play2CurrentPic[0];
+                arrayForDisplayBoard[i][CHARSIZE*j+1]=play2CurrentPic[1];
             }
         }
     }

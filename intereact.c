@@ -8,8 +8,26 @@ int JudgeDisplay(void);
 extern int arrayForInnerBoardLayout[SIZE][SIZE];
 int gameover=0;//游戏结束标示
 int id=1;//先后手
-int x0,y0;//上一次落子
+int x1=-1,y1=-1;
+int x2=-1,y2=-1;//上一次落子
 
+void Move(int x,int y,int id){
+    if(id==1){
+        if(x1>=0 && y1>=0){
+            arrayForInnerBoardLayout[x1][y1]=id;
+        }
+        arrayForInnerBoardLayout[x][y]=id+2;
+        x1=x,y1=y;
+    }else if(id==2){
+        if(x2>=0 && y2>=0){
+            arrayForInnerBoardLayout[x2][y2]=id;
+        }
+        arrayForInnerBoardLayout[x][y]=id+2;
+        x2=x,y2=y;
+    }
+    innerLayoutToDisplayArray();
+    gameover=Judge(x,y)*id;
+}
 
 void Player(){
     char c;
@@ -21,16 +39,14 @@ void Player(){
         scanf("%c %d",&c,&x);
         scanf("%c %d",&c,&x);//一个迷惑的bug
         x=15-x;
-        y=c-'A';
+        y=c-'a';
 
         if(arrayForInnerBoardLayout[x][y]!=0 || x<0 || x>=SIZE || y<0 || y>=SIZE){
             printf("请重新输入坐标：");
             continue;
             
         }else{
-            arrayForInnerBoardLayout[x][y]=id;
-            innerLayoutToDisplayArray();
-            gameover=Judge(x,y)*id;
+            Move(x,y,id);
             break;
         }
     }
@@ -46,9 +62,7 @@ void Computer(){
     x=rand()%SIZE;
     y=rand()%SIZE;
 
-    arrayForInnerBoardLayout[x][y]=cid;
-    innerLayoutToDisplayArray();
-    gameover=Judge(x,y)*cid;
+    Move(x,y,cid);
 
 }
 
@@ -67,7 +81,7 @@ int Judge(int x, int y)//判断五连
                 int col=y+k*d[j]*step[i][1];
                 if( row>=0 && row<SIZE &&
                     col>=1 && col<SIZE &&
-                    arrayForInnerBoardLayout[x][y] == arrayForInnerBoardLayout[row][col])
+                    arrayForInnerBoardLayout[x][y]-2 == arrayForInnerBoardLayout[row][col])
                     count+=1;
                 else
                     break;

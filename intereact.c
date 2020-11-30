@@ -16,14 +16,14 @@ void Move(int x,int y,int id){
         arrayForInnerBoardLayout[x_1][y_1]=1;
     if(x_2>=0)
         arrayForInnerBoardLayout[x_2][y_2]=2;
-        
-    arrayForInnerBoardLayout[x][y]=id+2;
     if(id==1){
-        x_1=x,y_1=y;
+        x_1=x;
+        y_1=y;
     }else{
-        x_2=x,y_2=y;
+        x_2=x;
+        y_2=y;
     }
-    
+    arrayForInnerBoardLayout[x][y]=id+2;
     innerLayoutToDisplayArray();
     gameover=Judge(x,y)*id;
 }

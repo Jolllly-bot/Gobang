@@ -1,6 +1,5 @@
 #include "gobang.h"
 
-extern int arrayForInnerBoardLayout[SIZE][SIZE];
 void Move(int x,int y,int id);//落子函数
 void Player(void);//玩家回合
 void Computer(void);//电脑回合
@@ -15,7 +14,7 @@ int x_2=-1,y_2=-1;//后手上一次落子
 void menu()
 {
     int m;
-    printf("    ---written by Jolllly---\n");
+    printf("    ---GOBANG by Jolllly---\n");
     printf("Select mode:\n");
     printf("1 -pvp\n");
     printf("2 -pve 玩家先手\n");
@@ -108,7 +107,7 @@ void Player(void)
 void Computer(void)
 {
     int x,y,cid;
-    cid=(id==1)?2:1;
+    cid=(id==1)?2:1;//电脑先后手
     
     srand(time(NULL));//大猩猩行为
     x=rand()%SIZE;

@@ -1,7 +1,5 @@
 #include "gobang.h"
 
-//棋盘使用的是GBK编码，每一个中文字符占用2个字节。
-
 //空棋盘模板 
 char arrayForEmptyBoard[SIZE][SIZE*CHARSIZE+1] = 
 {

@@ -6,12 +6,13 @@
 #include <stdlib.h>
 #include <time.h>
 #define SIZE 15
-#define CHARSIZE 2
+#define CHARSIZE 2//棋盘使用的是GBK编码，每一个中文字符占用2个字节。
 
 void initRecordBoard(void);
 void innerLayoutToDisplayArray(void);
 void displayBoard(void);
 void menu(void);
 
+extern int arrayForInnerBoardLayout[SIZE][SIZE];
 
 #endif

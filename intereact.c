@@ -1,15 +1,19 @@
 #include "gobang.h"
 
-void Move(int x,int y,int id);//落子函数
-void Player(void);//玩家回合
-void Computer(void);//电脑回合
-int JudgeFive(int x,int y);//判断五连
-int JudgeDisplay(void);//输出游戏结果
+void Move(int x,int y,int id);
+void Player(void);
+void Computer(void);
+int JudgeFive(int x,int y);
+int JudgeDisplay(void);
 
-int gameover=0;//游戏结束标示
-int id=1;//先后手标示
-int x_1=-1,y_1=-1;//先手上一次落子
-int x_2=-1,y_2=-1;//后手上一次落子
+//游戏结束标示
+int gameover=0;
+//先后手标示
+int id=1;
+//先手上一次落子
+int x_1=-1,y_1=-1;
+//后手上一次落子
+int x_2=-1,y_2=-1;
 
 void menu()
 {
@@ -23,7 +27,7 @@ void menu()
     switch (m)
     {
     case 1:
-        displayBoard();
+        display();
         while(1)
         {
             Player();
@@ -33,7 +37,7 @@ void menu()
             id=(id==1)?2:1;//切换玩家先后手关系
         }break;
     case 2:
-        displayBoard();
+        display();
         while (1)
         {
             Player();
@@ -63,23 +67,25 @@ void menu()
     }
 }
 
+//落子函数
 void Move(int x,int y,int id)
 {
     if(x_1>=0)
-        arrayForInnerBoardLayout[x_1][y_1]=1;
+        InnerBoard[x_1][y_1]=1;
     if(x_2>=0)
-        arrayForInnerBoardLayout[x_2][y_2]=2;
+        InnerBoard[x_2][y_2]=2;
     if(id==1){
         x_1=x,y_1=y;
     }else{
         x_2=x,y_2=y;
     }
-    arrayForInnerBoardLayout[x][y]=id+2;
-    innerLayoutToDisplayArray();
-    displayBoard();
+    InnerBoard[x][y]=id+2;
+    innerLayout();
+    display();
     gameover=JudgeFive(x,y)*id;
 }
 
+//玩家回合
 void Player(void)
 {
     char c;
@@ -92,7 +98,7 @@ void Player(void)
         x=15-x;
         y=c-'a';
 
-        if(arrayForInnerBoardLayout[x][y]!=0 || x<0 || x>=SIZE || y<0 || y>=SIZE){
+        if(InnerBoard[x][y]!=0 || x<0 || x>=SIZE || y<0 || y>=SIZE){
             printf("请重新输入坐标:");
             continue;
             
@@ -104,6 +110,7 @@ void Player(void)
     
 }
 
+//电脑回合
 void Computer(void)
 {
     int x,y,cid;
@@ -117,7 +124,7 @@ void Computer(void)
     printf("电脑选择下在:%c%d\n",y+'A',15-x);
 }
 
-
+//判断五连
 int JudgeFive(int x, int y)
 {
     int i, j, k;
@@ -132,7 +139,7 @@ int JudgeFive(int x, int y)
                 int col=y+k*d[j]*step[i][1];
                 if( row>=0 && row<SIZE &&
                     col>=1 && col<SIZE &&
-                    arrayForInnerBoardLayout[x][y]-2 == arrayForInnerBoardLayout[row][col])
+                    InnerBoard[x][y]-2 == InnerBoard[row][col])
                     count+=1;
                 else
                     break;
@@ -144,23 +151,24 @@ int JudgeFive(int x, int y)
     return 0;
 }
 
+//输出游戏结果
 int JudgeDisplay(void)
 {
     /*if(num == SIZE*SIZE)
     {
-        displayBoard();
+        display();
         printf("    ----平局！---\n");
         return 1;//对局结束
     }*/
     if(gameover == 1)
     {
-        displayBoard();
+        display();
         printf("    ----黑棋获胜！---\n");
         return 1;//对局结束
     }
     if(gameover == 2)
     {
-        displayBoard();
+        display();
         printf("    ----白棋获胜！---\n");
         return 1;//对局结束
     }

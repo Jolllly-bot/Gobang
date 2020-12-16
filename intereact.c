@@ -1,6 +1,6 @@
 #include "gobang.h"
 
-void Move(int x,int y,int id);
+void Move(int x,int y);
 void Player(void);
 void Computer(void);
 int JudgeFive(int x,int y);
@@ -26,7 +26,7 @@ void menu()
     scanf("%d", &m);
     switch (m)
     {
-    case 1:
+    case 1://pvp
         display();
         while(1)
         {
@@ -34,9 +34,9 @@ void menu()
             if(JudgeDisplay()){
                 break;
             }
-            id=(id==1)?2:1;//切换玩家先后手关系
+            
         }break;
-    case 2:
+    case 2://pve玩家先手
         display();
         while (1)
         {
@@ -49,10 +49,9 @@ void menu()
                 break;
             }
         }break;
-    case 3:
+    case 3://pve玩家后手
         while (1)
         {
-            id=2;//玩家后手
             Computer();
             if (JudgeDisplay()){
                 break;
@@ -68,7 +67,7 @@ void menu()
 }
 
 //落子函数
-void Move(int x,int y,int id)
+void Move(int x,int y)
 {
     if(x_1>=0)
         InnerBoard[x_1][y_1]=1;
@@ -80,9 +79,11 @@ void Move(int x,int y,int id)
         x_2=x,y_2=y;
     }
     InnerBoard[x][y]=id+2;
+    gameover=JudgeFive(x,y)* id;
     innerLayout();
     display();
-    gameover=JudgeFive(x,y)*id;
+    
+    id=(id==1)?2:1;//切换先后手关系
 }
 
 //玩家回合
@@ -102,8 +103,10 @@ void Player(void)
             printf("请重新输入坐标:");
             continue;
             
+        //if(禁手) todo
+
         }else{
-            Move(x,y,id);
+            Move(x,y);
             break;
         }
     }
@@ -113,14 +116,13 @@ void Player(void)
 //电脑回合
 void Computer(void)
 {
-    int x,y,cid;
-    cid=(id==1)?2:1;//电脑先后手
+    int x,y;
     
     srand(time(NULL));//大猩猩行为
     x=rand()%SIZE;
     y=rand()%SIZE;
     
-    Move(x,y,cid);
+    Move(x,y);
     printf("电脑选择下在:%c%d\n",y+'A',15-x);
 }
 
@@ -138,7 +140,7 @@ int JudgeFive(int x, int y)
                 int row=x+k*d[j]*step[i][0];
                 int col=y+k*d[j]*step[i][1];
                 if( row>=0 && row<SIZE &&
-                    col>=1 && col<SIZE &&
+                    col>=0 && col<SIZE &&
                     InnerBoard[x][y]-2 == InnerBoard[row][col])
                     count+=1;
                 else

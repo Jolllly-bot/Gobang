@@ -8,11 +8,16 @@
 #define SIZE 15
 #define CHARSIZE 2//棋盘使用的是GBK编码，每一个中文字符占用2个字节。
 
+struct point{
+    int x;
+    int y;
+};
+
 void initRecordBoard(void);
 void innerLayout(void);
 void display(void);
 void menu(void);
 
-extern int InnerBoard[SIZE][SIZE];
+extern int innerBoard[SIZE][SIZE];
 
 #endif

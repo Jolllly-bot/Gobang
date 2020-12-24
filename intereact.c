@@ -70,15 +70,15 @@ void menu()
 void Move(int x,int y)
 {
     if(x_1>=0)
-        InnerBoard[x_1][y_1]=1;
+        innerBoard[x_1][y_1]=1;
     if(x_2>=0)
-        InnerBoard[x_2][y_2]=2;
+        innerBoard[x_2][y_2]=2;
     if(id==1){
         x_1=x,y_1=y;
     }else{
         x_2=x,y_2=y;
     }
-    InnerBoard[x][y]=id+2;
+    innerBoard[x][y]=id+2;
     gameover=JudgeFive(x,y)* id;
     innerLayout();
     display();
@@ -99,7 +99,7 @@ void Player(void)
         x=15-x;
         y=c-'a';
 
-        if(InnerBoard[x][y]!=0 || x<0 || x>=SIZE || y<0 || y>=SIZE){
+        if(innerBoard[x][y]!=0 || x<0 || x>=SIZE || y<0 || y>=SIZE){
             printf("请重新输入坐标:");
             continue;
             
@@ -130,19 +130,19 @@ void Computer(void)
 int JudgeFive(int x, int y)
 {
     int i, j, k;
-    const int step[4][2]={{1,0},{0,1},{1,1},{1,-1}};//表示横竖加斜四个方向
+    const int direction[4][2]={{1,0},{0,1},{1,1},{1,-1}};//表示横竖加斜四个方向
     for(i=0;i<4;++i)
     {
         const int d[2]={-1,1};
         int count=1;
         for(j=0;j<2;++j){
             for(k=1;k<=4;++k){
-                int row=x+k*d[j]*step[i][0];
-                int col=y+k*d[j]*step[i][1];
+                int row=x+k*d[j]*direction[i][0];
+                int col=y+k*d[j]*direction[i][1];
                 if( row>=0 && row<SIZE &&
                     col>=0 && col<SIZE &&
-                    InnerBoard[x][y]-2 == InnerBoard[row][col])
-                    count+=1;
+                    innerBoard[x][y]-2 == innerBoard[row][col])
+                    count++;
                 else
                     break;
             }

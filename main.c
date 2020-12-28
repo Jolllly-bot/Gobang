@@ -44,17 +44,13 @@ int main()
 }
 
 
-//初始化一个空棋盘格局 
 void initRecordBoard(void){
-	//通过双重循环，将innerBoard清0
     int i,j;
     for(i=0;i<SIZE;i++)
         for (j=0;j<SIZE;j++)
             innerBoard[i][j]=0;
-        
 }
 
-//将innerBoard中记录的棋子位置，转化到displayBoard中
 void innerLayout(void){
 	//第一步：将EmptyBoard中记录的空棋盘，复制到displayBoard中
     int i,j;
@@ -63,7 +59,6 @@ void innerLayout(void){
             displayBoard[i][j]=EmptyBoard[i][j];
         }
     }
-
 	//第二步：扫描innerBoard，当遇到非0的元素，将●或者◎复制到displayBoard的相应位置上
 	//注意：displayBoard所记录的字符是中文字符，每个字符占2个字节。●和◎也是中文字符，每个也占2个字节。
     for(i=0;i<SIZE;i++){
@@ -87,7 +82,6 @@ void innerLayout(void){
 }
 
 
-//显示棋盘格局 
 void display(void){
 	int i;
 	system("clear");   //清屏  

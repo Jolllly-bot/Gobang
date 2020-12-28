@@ -1,11 +1,7 @@
 #include "gobang.h"
 
-void Move(int x,int y);
-void Player(void);
-void Computer(void);
-int JudgeFive(int x,int y);
-int JudgeDisplay(void);
-
+//步数
+int num=0;
 //游戏结束标示
 int gameover=0;
 //先后手标示
@@ -34,12 +30,11 @@ void menu()
             if(JudgeDisplay()){
                 break;
             }
-            
         }break;
     case 2://pve玩家先手
         display();
         while (1)
-        {
+        {   
             Player();
             if(JudgeDisplay()){
                 break;
@@ -59,6 +54,7 @@ void menu()
             Player();
             if(JudgeDisplay()){
                 break;
+            
             }
         }break;
     default:
@@ -67,7 +63,8 @@ void menu()
 }
 
 //落子函数
-void Move(int x,int y)
+/*
+void Set(int x,int y)
 {
     if(x_1>=0)
         innerBoard[x_1][y_1]=1;
@@ -78,13 +75,11 @@ void Move(int x,int y)
     }else{
         x_2=x,y_2=y;
     }
-    innerBoard[x][y]=id+2;
-    gameover=JudgeFive(x,y)* id;
-    innerLayout();
-    display();
+    innerBoard[x][y]=id;
+    
     
     id=(id==1)?2:1;//切换先后手关系
-}
+}*/
 
 //玩家回合
 void Player(void)
@@ -98,15 +93,19 @@ void Player(void)
         scanf("%c %d",&c,&x);//一个迷惑的bug
         x=15-x;
         y=c-'a';
-
-        if(innerBoard[x][y]!=0 || x<0 || x>=SIZE || y<0 || y>=SIZE){
+        struct Point p={x,y};
+        if(innerBoard[x][y]!=0 || !inBoard(p) ){
             printf("请重新输入坐标:");
             continue;
             
         //if(禁手) todo
 
         }else{
-            Move(x,y);
+            innerBoard[x][y]=id;
+            gameover=JudgeFive(x,y)* id;
+            num++;
+            innerLayout();
+            display();
             break;
         }
     }
@@ -116,14 +115,21 @@ void Player(void)
 //电脑回合
 void Computer(void)
 {
-    int x,y;
-    
-    srand(time(NULL));//大猩猩行为
-    x=rand()%SIZE;
-    y=rand()%SIZE;
-    
-    Move(x,y);
-    printf("电脑选择下在:%c%d\n",y+'A',15-x);
+    struct Point p;
+    if(num==0){
+        p.x=7;
+        p.y=7;
+    }
+    else
+        p=findPoint();
+
+    innerBoard[p.x][p.y]=id;
+    gameover=JudgeFive(p.x,p.y)* id;
+    num++;
+    innerLayout();
+    display();
+    printf("电脑选择下在:%c%d\n",p.y+'A',15-p.x);
+
 }
 
 //判断五连
@@ -141,7 +147,7 @@ int JudgeFive(int x, int y)
                 int col=y+k*d[j]*direction[i][1];
                 if( row>=0 && row<SIZE &&
                     col>=0 && col<SIZE &&
-                    innerBoard[x][y]-2 == innerBoard[row][col])
+                    innerBoard[x][y] == innerBoard[row][col])
                     count++;
                 else
                     break;
@@ -156,12 +162,13 @@ int JudgeFive(int x, int y)
 //输出游戏结果
 int JudgeDisplay(void)
 {
-    /*if(num == SIZE*SIZE)
+    id=(id==1)?2:1;
+    if(num == SIZE*SIZE)
     {
         display();
         printf("    ----平局！---\n");
         return 1;//对局结束
-    }*/
+    }
     if(gameover == 1)
     {
         display();

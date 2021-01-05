@@ -22,43 +22,43 @@ void menu()
     scanf("%d", &m);
     switch (m)
     {
-    case 1://pvp
-        display();
-        while(1)
-        {
-            Player();
-            if(JudgeDisplay()){
-                break;
-            }
-        }break;
-    case 2://pve玩家先手
-        display();
-        while (1)
-        {   
-            Player();
-            if(JudgeDisplay()){
-                break;
-            }
-            Computer();
-            if(JudgeDisplay()){
-                break;
-            }
-        }break;
-    case 3://pve玩家后手
-        while (1)
-        {
-            Computer();
-            if (JudgeDisplay()){
-                break;
-            }
-            Player();
-            if(JudgeDisplay()){
-                break;
-            
-            }
-        }break;
-    default:
-        break;
+        case 1://pvp
+            display();
+            while(1)
+            {
+                Player();
+                if(JudgeDisplay()){
+                    break;
+                }
+            }break;
+        case 2://pve玩家先手
+            display();
+            while (1)
+            {
+                Player();
+                if(JudgeDisplay()){
+                    break;
+                }
+                Computer();
+                if(JudgeDisplay()){
+                    break;
+                }
+            }break;
+        case 3://pve玩家后手
+            while (1)
+            {
+                Computer();
+                if (JudgeDisplay()){
+                    break;
+                }
+                Player();
+                if(JudgeDisplay()){
+                    break;
+
+                }
+            }break;
+        default:
+            break;
     }
 }
 
@@ -76,8 +76,8 @@ void Set(int x,int y)
         x_2=x,y_2=y;
     }
     innerBoard[x][y]=id;
-    
-    
+
+
     id=(id==1)?2:1;//切换先后手关系
 }*/
 
@@ -97,8 +97,8 @@ void Player(void)
         if(innerBoard[x][y]!=0 || !inBoard(p) ){
             printf("请重新输入坐标:");
             continue;
-            
-        //if(禁手) todo
+
+            //if(禁手) todo
 
         }else{
             innerBoard[x][y]=id;
@@ -109,26 +109,26 @@ void Player(void)
             break;
         }
     }
-    
+
 }
 
 //电脑回合
 void Computer(void)
 {
-    struct Point p;
+    extern int ai_x,ai_y;
     if(num==0){
-        p.x=7;
-        p.y=7;
+        ai_x=7;
+        ai_y=7;
     }
     else
-        p=findPoint();
+        alphaBeta(4,NINF,PINF);
 
-    innerBoard[p.x][p.y]=id;
-    gameover=JudgeFive(p.x,p.y)* id;
+    innerBoard[ai_x][ai_y]=id;
+    gameover=JudgeFive(ai_x,ai_y)* id;
     num++;
     innerLayout();
     display();
-    printf("电脑选择下在:%c%d\n",p.y+'A',15-p.x);
+    printf("电脑选择下在:%c%d\n",ai_y+'A',15-ai_x);
 
 }
 

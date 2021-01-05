@@ -1,5 +1,6 @@
 #include "gobang.h"
 
+//返回d方向上相邻di距离的点
 struct Point nextPoint(struct Point p,int d,int di){
     const int direction[4][2]={{1,0},{0,1},{1,1},{1,-1}};
     struct Point np;
@@ -67,34 +68,34 @@ int singleScore(struct Point p,int player){
         alive4+=info[i].alive4;
         dalive4+=info[i].dalive4;
         alive3+=info[i].alive3;
-        score+= info[i].dalive4*10000 + info[i].dead4*5000
+        score+= (info[i].alive4*100000 + info[i].dalive4*10000 + info[i].dead4*5000
                 + info[i].alive3*10000 + info[i].dalive3*1000 + info[i].dead3*500
                 + info[i].alive2*1000 + info[i].dalive2*200 + info[i].dead2*50
-                + info[i].alive1*100 + info[i].dalive1*10 + info[i].dead1*5;
+                + info[i].alive1*100 + info[i].dalive1*10 + info[i].dead1*5);
     }
     if(win5>=1)
         score+=20000000;
-    if(alive4 >= 1 || dalive4 >= 2 || (dalive4 >= 1 && alive3 >= 1) || alive3 >= 2)
+    if(alive4 >= 1|| dalive4 >= 2 || (dalive4 >= 1 && alive3 >= 1) || alive3 >= 2)//必胜
         score+=1000000;
     return score;
 }
 
-int wholeScore(){
-    int hid=(id==1)?2:1;
+int wholeScore(int player){
+    int opp=(player==1)?2:1;
     int comScore=0,humScore=0;
     for(int i=0;i<SIZE;i++){
         for(int j=0;j<SIZE;j++) {
             struct Point p={i,j};
-            if(innerBoard[i][j]==id)
-                comScore += singleScore(p,id);
-            else if(innerBoard[i][j]==hid)
-                humScore += singleScore(p,hid);
+            if(innerBoard[i][j]==player)
+                comScore += singleScore(p,player);
+            else if(innerBoard[i][j]==opp)
+                humScore += singleScore(p,opp);
         }
     }
     return comScore-humScore;
 }
 
-struct Point findPoint(){
+/*struct Point findPoint(){
     struct Point p;
     int i,j;
     int max=-2147483648,temp;
@@ -112,7 +113,7 @@ struct Point findPoint(){
         }
     }
     return p;
-}
+}*/
 
 struct Type typeAnalysis(int length,int *left, int *right,int player)
 {

@@ -7,7 +7,6 @@ struct POINTS{//最佳落子位置,[0]分数最高,[9]分数最低
 
 int ai_x,ai_y;
 
-
 int alphaBeta(int depth,int alpha,int beta){
     if(depth==0){
         struct POINTS P = inspireFind(id);//生成最佳的可能落子位置
@@ -20,12 +19,12 @@ int alphaBeta(int depth,int alpha,int beta){
         struct POINTS P=inspireFind(id);
 
         for(int i=0;i<10;i++){
-            innerBoard[P.pos[i].x][P.pos[i].y]=id;//模拟己方落子,不能用board,否则可能改变board的信息
+            innerBoard[P.pos[i].x][P.pos[i].y]=id;//模拟己方落子
             int temp=alphaBeta(depth-1,alpha,beta);
             innerBoard[P.pos[i].x][P.pos[i].y]=0;//还原落子
             if(temp>alpha){
                 alpha=temp;
-                if(depth==4){//深度(必须为偶数),用来找最佳落子
+                if(depth==DEPTH){//用来找最佳落子
                     ai_x=P.pos[i].x;
                     ai_y=P.pos[i].y;
                 }
@@ -66,10 +65,10 @@ struct POINTS inspireFind(int player){
 
             if(innerBoard[i][j]!=0){
                 struct Point p={i,j};
-                for(int k=0;k<4;k++){//搜索相邻3个距离内可落子点
-                    for(int di=-3;di<=3;di++){
+                for(int k=0;k<4;k++){
+                    for(int di=-3;di<=3;di++){//搜索相邻3个距离内可落子点
                         struct Point np=nextPoint(p,k,di);
-                        if(inBoard(np) && innerBoard[np.x][np.y]==0){
+                        if(inBoard(np) && score[np.x][np.y]==NINF && innerBoard[np.x][np.y]==0){
                             innerBoard[np.x][np.y]=player;
                             score[np.x][np.y]=wholeScore(player);
                             innerBoard[np.x][np.y]=0;

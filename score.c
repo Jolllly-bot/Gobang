@@ -21,7 +21,7 @@ void getBoundary(struct Point p,int d,int *s,int way,int player){
         struct Point np = nextPoint(p, d, way*i);
         if (inBoard(np))
             s[i] = innerBoard[np.x][np.y];
-        else
+        else //±ﬂΩÁ
             s[i] = (player==1)?2:1;
     }
 }
@@ -30,7 +30,7 @@ int getLength(struct Point p,int d,int *left,int *right,int player)
 {
     int i;
     int count=1;
-    for(i=1; ;i++){
+    for(i=1; ;i++){//◊Û±ﬂ≈–∂œ
         struct Point np = nextPoint(p,d,-i);
         if( inBoard(np) && player == innerBoard[np.x][np.y])
             count++;
@@ -39,7 +39,7 @@ int getLength(struct Point p,int d,int *left,int *right,int player)
             break;
         }
     }
-    for(i=1; ;i++){
+    for(i=1; ;i++){//”“±ﬂ≈–∂œ
         struct Point np = nextPoint(p,d,i);
         if( inBoard(np) && player == innerBoard[np.x][np.y])
             count++;
@@ -75,7 +75,7 @@ int singleScore(struct Point p,int player){
     }
     if(win5>=1)
         score+=20000000;
-    if(alive4 >= 1|| dalive4 >= 2 || (dalive4 >= 1 && alive3 >= 1) || alive3 >= 2)//±ÿ §
+    if(alive4 >= 1 || dalive4 >= 2 || (dalive4 >= 1 && alive3 >= 1) || alive3 >= 2)//±ÿ §
         score+=1000000;
     return score;
 }
@@ -89,7 +89,7 @@ int wholeScore(int player){
             if(innerBoard[i][j]==player)
                 comScore += singleScore(p,player);
             else if(innerBoard[i][j]==opp)
-                humScore += singleScore(p,opp);
+                humScore += singleScore(p,opp)*2;
         }
     }
     return comScore-humScore;

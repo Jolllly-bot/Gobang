@@ -9,6 +9,7 @@
 #define CHARSIZE 2//棋盘使用的是GBK编码，每一个中文字符占用2个字节。
 #define NINF -2147483648
 #define PINF 2147483647
+#define DEPTH 4 //深度(必须为偶数)
 
 struct Point{
     int x;
@@ -36,27 +37,27 @@ extern char displayBoard[SIZE][SIZE*CHARSIZE+1];
 extern int id;
 extern int num;
 
+
 void initRecordBoard(void);//初始化一个空棋盘格局
 void innerLayout(void);//将innerBoard中记录的棋子位置，转化到displayBoard中
 void display(void);//显示棋盘格局
 void menu(void);
 
-void Move(int x,int y);
+void Set(int x,int y,int player);
 void Player(void);
 void Computer(void);
 int JudgeFive(int x,int y);
 int JudgeDisplay(void);
+
 
 struct Point nextPoint(struct Point p,int d,int di);
 int inBoard(struct Point p);
 void getBoundary(struct Point p,int d,int *s,int way,int player);
 int getLength(struct Point p,int d,int *left,int *right,int player);
 int singleScore(struct Point p,int player);
-int wholeScore();
-struct Point findPoint();
+int wholeScore(int player);
 struct Type typeAnalysis(int length,int *left, int *right,int player);
 
-void copyBoard(int board[SIZE][SIZE],int toBoard[SIZE][SIZE]);
 int alphaBeta(int depth,int alpha,int beta);
 struct POINTS inspireFind(int player);
 #endif

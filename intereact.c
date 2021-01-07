@@ -4,7 +4,7 @@
 int num=0;
 //游戏结束标示
 int gameover=0;
-//先后手标示
+//先后手标示 1:先 2：后
 int id=1;
 //先手上一次落子
 int x_1=-1,y_1=-1;
@@ -24,8 +24,7 @@ void menu()
     {
         case 1://pvp
             display();
-            while(1)
-            {
+            while(1){
                 Player();
                 if(JudgeDisplay()){
                     break;
@@ -33,8 +32,7 @@ void menu()
             }break;
         case 2://pve玩家先手
             display();
-            while (1)
-            {
+            while (1){
                 Player();
                 if(JudgeDisplay()){
                     break;
@@ -45,8 +43,7 @@ void menu()
                 }
             }break;
         case 3://pve玩家后手
-            while (1)
-            {
+            while (1){
                 Computer();
                 if (JudgeDisplay()){
                     break;
@@ -54,7 +51,6 @@ void menu()
                 Player();
                 if(JudgeDisplay()){
                     break;
-
                 }
             }break;
         default:
@@ -63,23 +59,13 @@ void menu()
 }
 
 //落子函数
-/*
-void Set(int x,int y)
+void Set(int x,int y,int player)
 {
-    if(x_1>=0)
-        innerBoard[x_1][y_1]=1;
-    if(x_2>=0)
-        innerBoard[x_2][y_2]=2;
-    if(id==1){
-        x_1=x,y_1=y;
-    }else{
-        x_2=x,y_2=y;
-    }
-    innerBoard[x][y]=id;
+    innerBoard[x][y]=player;
+    num++;
+}
 
 
-    id=(id==1)?2:1;//切换先后手关系
-}*/
 
 //玩家回合
 void Player(void)
@@ -101,9 +87,8 @@ void Player(void)
             //if(禁手) todo
 
         }else{
-            innerBoard[x][y]=id;
+            Set(x,y,id);
             gameover=JudgeFive(x,y)* id;
-            num++;
             innerLayout();
             display();
             break;
@@ -117,15 +102,17 @@ void Computer(void)
 {
     extern int ai_x,ai_y;
     if(num==0){
-        ai_x=7;
-        ai_y=7;
+        srand(time(NULL));
+        int a=rand()%2;
+        int b=rand()%2;
+        ai_x=7-a;
+        ai_y=7-a;
     }
     else
-        alphaBeta(4,NINF,PINF);
+        alphaBeta(DEPTH,NINF,PINF);
 
-    innerBoard[ai_x][ai_y]=id;
+    Set(ai_x,ai_y,id);
     gameover=JudgeFive(ai_x,ai_y)* id;
-    num++;
     innerLayout();
     display();
     printf("电脑选择下在:%c%d\n",ai_y+'A',15-ai_x);

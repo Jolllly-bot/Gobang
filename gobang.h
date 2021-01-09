@@ -7,9 +7,10 @@
 #include <time.h>
 #define SIZE 15
 #define CHARSIZE 2//棋盘使用的是GBK编码，每一个中文字符占用2个字节。
-#define NINF -2147483648
+#define NINF -2147483647
 #define PINF 2147483647
 #define DEPTH 4 //深度(必须为偶数)
+#define LIST 20
 
 struct Point{
     int x;
@@ -17,6 +18,7 @@ struct Point{
 };
 
 struct Type{
+    int more;//长连
     int win5;//20000000
     int alive4;//活4
     int dalive4;//冲4 10000
@@ -36,6 +38,7 @@ extern int innerBoard[SIZE][SIZE];
 extern char displayBoard[SIZE][SIZE*CHARSIZE+1];
 extern int id;
 extern int num;
+extern int ai_x,ai_y;
 
 
 void initRecordBoard(void);//初始化一个空棋盘格局
@@ -43,7 +46,7 @@ void innerLayout(void);//将innerBoard中记录的棋子位置，转化到displayBoard中
 void display(void);//显示棋盘格局
 void menu(void);
 
-void Set(int x,int y,int player);
+void Set(struct Point p,int player);
 void Player(void);
 void Computer(void);
 int JudgeFive(int x,int y);
@@ -57,7 +60,9 @@ int getLength(struct Point p,int d,int *left,int *right,int player);
 int singleScore(struct Point p,int player);
 int wholeScore(int player);
 struct Type typeAnalysis(int length,int *left, int *right,int player);
+struct Type getInfo(struct Point p,int player);
+int forbiddenHand(struct Type info);
 
-int alphaBeta(int depth,int alpha,int beta);
+int alphaBeta(int depth,int alpha,int beta,int player);
 struct POINTS inspireFind(int player);
 #endif

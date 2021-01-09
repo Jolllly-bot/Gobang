@@ -59,59 +59,67 @@ void menu()
 }
 
 //落子函数
-void Set(int x,int y,int player)
+void Set(struct Point p,int player)
 {
-    innerBoard[x][y]=player;
+    innerBoard[p.x][p.y]=player;
     num++;
 }
 
-
+int inBoard(struct Point p){
+    if(p.x>=0 && p.x<SIZE && p.y>=0 && p.y<SIZE)
+        return 1;
+    else return 0;
+}
 
 //玩家回合
 void Player(void)
 {
     char c;
-    int x=0,y=0;
-
+    int x;
+    struct Point p;
     printf("player%d输入坐标:",id);
-    while(1){
-        scanf("%c %d",&c,&x);
-        scanf("%c %d",&c,&x);//一个迷惑的bug
-        x=15-x;
-        y=c-'a';
-        struct Point p={x,y};
-        if(innerBoard[x][y]!=0 || !inBoard(p) ){
+    scanf("%c %d",&c,&x);
+    scanf("%c %d",&c,&x);//一个迷惑的bug
+    p.x=15-x;
+    p.y=c-'a';
+
+    while(innerBoard[p.x][p.y]!=0 || !inBoard(p) ){
             printf("请重新输入坐标:");
-            continue;
-
-            //if(禁手) todo
-
-        }else{
-            Set(x,y,id);
-            gameover=JudgeFive(x,y)* id;
-            innerLayout();
-            display();
-            break;
-        }
+            scanf("%c %d",&c,&x);
+            scanf("%c %d",&c,&x);//一个迷惑的bug
+            p.x=15-x;
+            p.y=c-'a';
     }
+
+    Set(p,id);
+    gameover=JudgeFive(p.x,p.y)* id;
+
+    if(id==1){//禁手判断
+        struct Type info=getInfo(p,id);
+        if(forbiddenHand(info))
+            gameover = 3;
+    }
+    innerLayout();
+    display();
+
 
 }
 
 //电脑回合
 void Computer(void)
 {
-    extern int ai_x,ai_y;
     if(num==0){
         srand(time(NULL));
         int a=rand()%2;
         int b=rand()%2;
         ai_x=7-a;
-        ai_y=7-a;
+        ai_y=7-b;
     }
     else
-        alphaBeta(DEPTH,NINF,PINF);
+        alphaBeta(DEPTH,NINF,PINF,id);
 
-    Set(ai_x,ai_y,id);
+    struct Point p={ai_x,ai_y};
+    Set(p,id);
     gameover=JudgeFive(ai_x,ai_y)* id;
     innerLayout();
     display();
@@ -166,6 +174,12 @@ int JudgeDisplay(void)
     {
         display();
         printf("    ----白棋获胜！---\n");
+        return 1;//对局结束
+    }
+    if(gameover == 3)
+    {
+        display();
+        printf("    ----禁手！白棋获胜！---\n");
         return 1;//对局结束
     }
     return 0;

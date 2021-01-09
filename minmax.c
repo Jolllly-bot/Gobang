@@ -1,55 +1,52 @@
 #include "gobang.h"
 
 struct POINTS{//最佳落子位置,[0]分数最高,[9]分数最低
-    struct Point pos[10];
-    int score[10];
+    struct Point pos[LIST];
+    int score[LIST];
 };
 
 int ai_x,ai_y;
 
-int alphaBeta(int depth,int alpha,int beta){
-    if(depth==0){
-        struct POINTS P = inspireFind(id);//生成最佳的可能落子位置
-        return P.score[0];//返回最佳位置对应的最高分
-    }
-    //else if()//分出胜负
-    //return wholeScore(id);
-
-    else if(depth%2==0){//max层,我方决策
-        struct POINTS P=inspireFind(id);
-
-        for(int i=0;i<10;i++){
-            innerBoard[P.pos[i].x][P.pos[i].y]=id;//模拟己方落子
-            int temp=alphaBeta(depth-1,alpha,beta);
-            innerBoard[P.pos[i].x][P.pos[i].y]=0;//还原落子
-            if(temp>alpha){
-                alpha=temp;
-                if(depth==DEPTH){//用来找最佳落子
-                    ai_x=P.pos[i].x;
-                    ai_y=P.pos[i].y;
-                }
-            }
-            if(beta<=alpha)
-                break;//剪枝
+int isWin(){
+    int i,j,k;
+    for(i=0;i<SIZE;i++){
+        for(j=0;j<SIZE;j++){
+            if(innerBoard[i][j]!=0 && ((k=JudgeFive(i,j))!=0))
+                break;
         }
-        return alpha;
-
-    }else{//min层,敌方决策
-        int opp=(id==1)?2:1;
-        struct POINTS P=inspireFind(opp);
-
-        for(int i=0;i<10;i++){
-            innerBoard[P.pos[i].x][P.pos[i].y]=opp;//模拟敌方落子
-            int temp=alphaBeta(depth-1,alpha,beta);
-            innerBoard[P.pos[i].x][P.pos[i].y]=0;//还原落子
-            if(temp<beta)
-                beta=temp;
-            if(beta<=alpha)
-                break;//剪枝
-        }
-        return beta;
     }
+    return k;
 }
+
+
+int alphaBeta(int depth,int alpha,int beta,int player) {
+    if (depth == 0 || num==SIZE*SIZE)  {//负极大极小值算法
+        return wholeScore(id);
+    }
+    if (isWin())//分出胜负
+        return PINF;
+    int opp = (player == 1) ? 2 : 1;
+    struct POINTS P = inspireFind(player);
+
+    for (int i = 0; i < LIST; i++) {
+        innerBoard[P.pos[i].x][P.pos[i].y] = player;//模拟落子
+        int temp = -alphaBeta(depth - 1, -beta, -alpha, opp);
+        innerBoard[P.pos[i].x][P.pos[i].y] = 0;//还原落子
+        if (temp >= beta) {
+            return beta;//剪枝
+        }
+        if (temp > alpha) {
+            alpha = temp;
+            if (depth == DEPTH) {//用来找最佳落子
+                ai_x = P.pos[i].x;
+                ai_y = P.pos[i].y;
+            }
+        }
+    }
+    return alpha;
+}
+
+
 
 struct POINTS inspireFind(int player){
     static int score[SIZE][SIZE];
@@ -62,15 +59,15 @@ struct POINTS inspireFind(int player){
     }
     for(i=0;i<SIZE;i++){
         for(j=0;j<SIZE;j++){
-
             if(innerBoard[i][j]!=0){
                 struct Point p={i,j};
+
                 for(int k=0;k<4;k++){
                     for(int di=-3;di<=3;di++){//搜索相邻3个距离内可落子点
                         struct Point np=nextPoint(p,k,di);
                         if(inBoard(np) && score[np.x][np.y]==NINF && innerBoard[np.x][np.y]==0){
                             innerBoard[np.x][np.y]=player;
-                            score[np.x][np.y]=wholeScore(player);
+                            score[np.x][np.y]=wholeScore(player);//todo
                             innerBoard[np.x][np.y]=0;
                         }
                     }
@@ -79,7 +76,7 @@ struct POINTS inspireFind(int player){
         }
     }
 
-    for(int k=0;k<10;k++){
+    for(int k=0;k<LIST;k++){
         int temp=NINF;
         for(i=0;i<SIZE;i++){
             for(j=0;j<SIZE;j++){

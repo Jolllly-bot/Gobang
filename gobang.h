@@ -7,17 +7,18 @@
 #include <time.h>
 #define SIZE 15
 #define CHARSIZE 2//棋盘使用的是GBK编码，每一个中文字符占用2个字节。
-#define NINF -2147483647
-#define PINF 2147483647
+#define NINF -9223372036854775806
+#define PINF 9223372036854775806
 #define DEPTH 4 //深度(必须为偶数)
-#define LIST 20
+#define LIST 24
 
-struct Point{
+typedef long long LL;
+typedef struct Point{
     int x;
     int y;
-};
+}Point;
 
-struct Type{
+typedef struct Info{
     int more;//长连
     int win5;//20000000
     int alive4;//活4
@@ -32,7 +33,7 @@ struct Type{
     int alive1; //活1 100
     int dalive1; //眠1 10
     int dead1; //死1 5
-};
+}Info;
 
 extern int innerBoard[SIZE][SIZE];
 extern char displayBoard[SIZE][SIZE*CHARSIZE+1];
@@ -46,23 +47,25 @@ void innerLayout(void);//将innerBoard中记录的棋子位置，转化到displayBoard中
 void display(void);//显示棋盘格局
 void menu(void);
 
-void Set(struct Point p,int player);
+void set(Point p,int player);
+void unSet(Point p);
+int opp(int player);
 void Player(void);
 void Computer(void);
 int JudgeFive(int x,int y);
 int JudgeDisplay(void);
 
 
-struct Point nextPoint(struct Point p,int d,int di);
-int inBoard(struct Point p);
-void getBoundary(struct Point p,int d,int *s,int way,int player);
-int getLength(struct Point p,int d,int *left,int *right,int player);
-int singleScore(struct Point p,int player);
-int wholeScore(int player);
-struct Type typeAnalysis(int length,int *left, int *right,int player);
-struct Type getInfo(struct Point p,int player);
-int forbiddenHand(struct Type info);
+Point nextPoint(Point p,int d,int di);
+int inBoard(Point p);
+void getBoundary(Point p,int d,int *s,int way,int player);
+int getLength(Point p,int d,int *left,int *right,int player);
+LL singleScore(Point p,int player);
+LL wholeScore(int player);
+Info typeAnalysis(int length,int *left, int *right,int player);
+Info getInfo(Point p,int player);
+int forbiddenHand(Info info);
 
-int alphaBeta(int depth,int alpha,int beta,int player);
+LL alphaBeta(int depth,LL alpha,LL beta,int player);
 struct POINTS inspireFind(int player);
 #endif

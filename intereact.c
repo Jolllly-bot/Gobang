@@ -58,25 +58,12 @@ void menu()
     }
 }
 
-//落子函数
-void Set(struct Point p,int player)
-{
-    innerBoard[p.x][p.y]=player;
-    num++;
-}
-
-int inBoard(struct Point p){
-    if(p.x>=0 && p.x<SIZE && p.y>=0 && p.y<SIZE)
-        return 1;
-    else return 0;
-}
-
 //玩家回合
 void Player(void)
 {
     char c;
     int x;
-    struct Point p;
+    Point p;
     printf("player%d输入坐标:",id);
     scanf("%c %d",&c,&x);
     scanf("%c %d",&c,&x);//一个迷惑的bug
@@ -91,11 +78,11 @@ void Player(void)
             p.y=c-'a';
     }
 
-    Set(p,id);
+    set(p,id);
     gameover=JudgeFive(p.x,p.y)* id;
 
     if(id==1){//禁手判断
-        struct Type info=getInfo(p,id);
+        Info info=getInfo(p,id);
         if(forbiddenHand(info))
             gameover = 3;
     }
@@ -114,17 +101,47 @@ void Computer(void)
         int b=rand()%2;
         ai_x=7-a;
         ai_y=7-b;
-    }
+    }//随机开局
     else
         alphaBeta(DEPTH,NINF,PINF,id);
 
-    struct Point p={ai_x,ai_y};
-    Set(p,id);
+    Point p={ai_x,ai_y};
+    set(p,id);
     gameover=JudgeFive(ai_x,ai_y)* id;
     innerLayout();
     display();
     printf("电脑选择下在:%c%d\n",ai_y+'A',15-ai_x);
 
+}
+
+//落子函数
+void set(struct Point p,int player)
+{
+    innerBoard[p.x][p.y]=player;
+    num++;
+}
+
+//取消落子
+void unSet(Point p)
+{
+    innerBoard[p.x][p.y]=0;
+    num--;
+}
+
+//在棋盘内没有越界
+int inBoard(struct Point p){
+    if(p.x>=0 && p.x<SIZE && p.y>=0 && p.y<SIZE)
+        return 1;
+    else return 0;
+}
+
+
+//对手
+int opp(int player){
+    if(player==1)
+        return 2;
+    else
+        return 1;
 }
 
 //判断五连
@@ -157,7 +174,7 @@ int JudgeFive(int x, int y)
 //输出游戏结果
 int JudgeDisplay(void)
 {
-    id=(id==1)?2:1;
+    id=opp(id);//交换玩家
     if(num == SIZE*SIZE)
     {
         display();
@@ -179,8 +196,9 @@ int JudgeDisplay(void)
     if(gameover == 3)
     {
         display();
-        printf("    ----禁手！白棋获胜！---\n");
-        return 1;//对局结束
+        printf("    ----禁手！---\n");
+        getchar();
+        return 0;//不结束避免判断错
     }
     return 0;
 }

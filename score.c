@@ -22,12 +22,12 @@ void getBoundary(struct Point p,int d,int *s,int way,int player){
     }
 }
 
-int getLength(struct Point p,int d,int *left,int *right,int player)
+int getLength(Point p,int d,int *left,int *right,int player)
 {
     int i;
     int count=1;
     for(i=1; ;i++){//左边判断
-        struct Point np = nextPoint(p,d,-i);
+        Point np = nextPoint(p,d,-i);
         if( inBoard(np) && player == innerBoard[np.x][np.y])
             count++;
         else{
@@ -36,7 +36,7 @@ int getLength(struct Point p,int d,int *left,int *right,int player)
         }
     }
     for(i=1; ;i++){//右边判断
-        struct Point np = nextPoint(p,d,i);
+        Point np = nextPoint(p,d,i);
         if( inBoard(np) && player == innerBoard[np.x][np.y])
             count++;
         else{
@@ -47,7 +47,7 @@ int getLength(struct Point p,int d,int *left,int *right,int player)
     return count;
 }
 
-int forbiddenHand(struct Type info){
+int forbiddenHand(Info info){
     if(info.more>0){
         return 1;
     }
@@ -57,47 +57,42 @@ int forbiddenHand(struct Type info){
     return 0;
 }
 
-int singleScore(struct Point p,int player){
-    int score=0;
-    struct Type info;
+LL singleScore(struct Point p,int player){
+    LL score=0;
+    Info info;
     info = getInfo(p,player);
 
-    if(player==1 && forbiddenHand(info)){//禁手
-        score=NINF/2;//todo 禁手极小分避免选择，+10避免重复
-    }else{
-        score+= ( info.alive4*100000 + info.dalive4*10000 + info.dead4*3000
-                 + info.alive3*10000 + info.dalive3*1000 + info.dead3*300
-                 + info.alive2*1000 + info.dalive2*200 + info.dead2*30
-                 + info.alive1*100 + info.dalive1*10 + info.dead1*3);
+        score+= ( info.win5*10000000 + info.alive4*100000 + info.dalive4*10000 + info.dead4*100
+                 + info.alive3*10000 + info.dalive3*1000 + info.dead3*10
+                 + info.alive2*2000 + info.dalive2*200 + info.dead2*1
+                 + info.alive1*100 + info.dalive1*10 + info.dead1*1);
 
-        if(info.win5>=1)
-            score+=20000000;
-        if(info.alive4 >= 2 || info.dalive4>=2 || (info.dalive4 >= 1 && info.alive3 >= 1) || info.alive3 >= 2)//必胜
-            score+=1000000;
-    }
+        if(info.alive4 >= 1 || info.dalive4>=2 || (info.dalive4 >= 1 && info.alive3 >= 1) || info.alive3 >= 2)//必胜
+            score+=100000;
+
     return score;
 }
 
-int wholeScore(int player){
-    int opp=(player==1)?2:1;
-    int comScore=0,humScore=0;
+LL wholeScore(int player){
+    int hum=opp(player);
+    LL comScore=0,humScore=0;
     for(int i=0;i<SIZE;i++){
         for(int j=0;j<SIZE;j++) {
             struct Point p={i,j};
             if(innerBoard[i][j]==player)
                 comScore += singleScore(p,player);
-            else if(innerBoard[i][j]==opp)
-                humScore += singleScore(p,opp);
+            else if(innerBoard[i][j]==hum)
+                humScore += singleScore(p,hum)*2;//因为我方已经下了一步，对方的分需要更大一点
         }
     }
     return comScore-humScore;
 }
 
-struct Type getInfo(struct Point p,int player){
+Info getInfo(struct Point p,int player){
 
-    struct Type temp = {0};
+    Info temp = {0};
     for(int i=0;i<4;i++){
-        struct Type info[4];
+        Info info[4];
         int length;
         int left[4],right[4];
         length=getLength(p,i,left,right,player);
@@ -120,9 +115,9 @@ struct Type getInfo(struct Point p,int player){
     return temp;
 }
 
-struct Type typeAnalysis(int length,int *left, int *right,int player)
+Info typeAnalysis(int length,int *left, int *right,int player)
 {
-    struct Type temp={0};
+    Info temp={0};
     if(length >5)
         temp.more++;
     else if (length == 5)
@@ -157,11 +152,9 @@ struct Type typeAnalysis(int length,int *left, int *right,int player)
         else if ((left[0] == 0 && left[1] == player && left[2] == player) ||
             (right[0] == 0 && right[1] == player && right[2] == player))
             temp.dalive4++;
-        else if(left[0]==0 && right[0]==0 && ((right[1]==player) || left[1]==player))
-            temp.alive3++;
         else if (left[0] == 0 && right[0] == 0 &&
                  ((left[1] == player && left[2] == 0) || (right[1] == player && right[2] == 0)))
-            temp.dalive3++;
+            temp.alive3++;
         else if ((left[0] == 0 && left[2] == 0 && left[1] == player) ||
                  (right[0] == 0 && right[2] == 0 && right[1] == player))
             temp.dead3++;

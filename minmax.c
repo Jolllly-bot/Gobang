@@ -1,8 +1,8 @@
 #include "gobang.h"
 
 struct POINTS{//最佳落子位置,[0]分数最高,[9]分数最低
-    struct Point pos[LIST];
-    int score[LIST];
+    Point pos[LIST];
+    LL score[LIST];
 };
 
 int ai_x,ai_y;
@@ -19,25 +19,25 @@ int isWin(){
 }
 
 
-int alphaBeta(int depth,int alpha,int beta,int player) {
+LL alphaBeta(int depth,LL alpha,LL beta,int player) {
     if (depth == 0 || num==SIZE*SIZE)  {//负极大极小值算法
         return wholeScore(id);
     }
     if (isWin())//分出胜负
         return PINF;
-    int opp = (player == 1) ? 2 : 1;
+
     struct POINTS P = inspireFind(player);
 
     for (int i = 0; i < LIST; i++) {
-        innerBoard[P.pos[i].x][P.pos[i].y] = player;//模拟落子
-        int temp = -alphaBeta(depth - 1, -beta, -alpha, opp);
-        innerBoard[P.pos[i].x][P.pos[i].y] = 0;//还原落子
+        set(P.pos[i], player);//模拟落子
+        LL temp = -alphaBeta(depth - 1, -beta, -alpha, opp(player));
+        unSet(P.pos[i]);//还原落子
         if (temp >= beta) {
             return beta;//剪枝
         }
         if (temp > alpha) {
             alpha = temp;
-            if (depth == DEPTH) {//用来找最佳落子
+            if (depth == DEPTH) {//最高层用来找最佳落子
                 ai_x = P.pos[i].x;
                 ai_y = P.pos[i].y;
             }
@@ -49,7 +49,7 @@ int alphaBeta(int depth,int alpha,int beta,int player) {
 
 
 struct POINTS inspireFind(int player){
-    static int score[SIZE][SIZE];
+    static LL score[SIZE][SIZE];
     struct POINTS bestPoints;
     int i,j;
     for(i=0;i<SIZE;i++) {
@@ -66,18 +66,20 @@ struct POINTS inspireFind(int player){
                     for(int di=-3;di<=3;di++){//搜索相邻3个距离内可落子点
                         struct Point np=nextPoint(p,k,di);
                         if(inBoard(np) && score[np.x][np.y]==NINF && innerBoard[np.x][np.y]==0){
-                            innerBoard[np.x][np.y]=player;
-                            score[np.x][np.y]=wholeScore(player);//todo
-                            innerBoard[np.x][np.y]=0;
+                                innerBoard[np.x][np.y] = player;
+                                score[np.x][np.y] = wholeScore(player);
+                                innerBoard[np.x][np.y] = 0;
+                            }
                         }
+
                     }
                 }
             }
         }
-    }
+
 
     for(int k=0;k<LIST;k++){
-        int temp=NINF;
+        LL temp=NINF;
         for(i=0;i<SIZE;i++){
             for(j=0;j<SIZE;j++){
                 if(score[i][j]>temp){

@@ -18,7 +18,7 @@ void getBoundary(struct Point p,int d,int *s,int way,int player){
         if (inBoard(np))
             s[i] = innerBoard[np.x][np.y];
         else //边界
-            s[i] = (player==1)?2:1;
+            s[i] = opp(player);
     }
 }
 
@@ -47,12 +47,15 @@ int getLength(Point p,int d,int *left,int *right,int player)
     return count;
 }
 
-int forbiddenHand(Info info){
-    if(info.more>0){
-        return 1;
-    }
-    if(info.win5==0 && (info.alive3>=2 || info.alive4+info.dalive4>=2)) {
-        return 1;
+int forbiddenHand(Point p,int player){
+    if(player==1){
+        Info info=getInfo(p,player);
+        if(info.more>0){
+            return 1;
+        }
+        if(info.win5==0 && (info.alive3>=2 || info.alive4+info.dalive4>=2)) {
+            return 1;
+        }
     }
     return 0;
 }
@@ -62,13 +65,15 @@ LL singleScore(struct Point p,int player){
     Info info;
     info = getInfo(p,player);
 
-        score+= ( info.win5*10000000 + info.alive4*100000 + info.dalive4*10000 + info.dead4*100
-                 + info.alive3*10000 + info.dalive3*1000 + info.dead3*10
-                 + info.alive2*2000 + info.dalive2*200 + info.dead2*1
-                 + info.alive1*100 + info.dalive1*10 + info.dead1*1);
+    score+= ( info.dalive4*5000 + info.dead4*1000
+             + info.alive3*10000 + info.dalive3*1000 + info.dead3*500
+             + info.alive2*1000 + info.dalive2*200 + info.dead2*50
+             + info.alive1*100 + info.dalive1*10 + info.dead1*5);
 
-        if(info.alive4 >= 1 || info.dalive4>=2 || (info.dalive4 >= 1 && info.alive3 >= 1) || info.alive3 >= 2)//必胜
-            score+=100000;
+    if(info.win5>=1)
+        score+=1000000;
+    if(info.alive4 >= 1 || info.dalive4>=2 || (info.dalive4 >= 1 && info.alive3 >= 1) || info.alive3 >= 2)//必胜
+        score+=10000;
 
     return score;
 }
@@ -82,7 +87,7 @@ LL wholeScore(int player){
             if(innerBoard[i][j]==player)
                 comScore += singleScore(p,player);
             else if(innerBoard[i][j]==hum)
-                humScore += singleScore(p,hum)*2;//因为我方已经下了一步，对方的分需要更大一点
+                humScore += singleScore(p,hum);
         }
     }
     return comScore-humScore;

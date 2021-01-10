@@ -1,96 +1,99 @@
 #include "gobang.h"
 
-struct POINTS{//最佳落子位置,[0]分数最高,[9]分数最低
-    Point pos[LIST];
-    LL score[LIST];
-};
 
 int ai_x,ai_y;
 
 int isWin(){
-    int i,j,k;
+    int i,j;
     for(i=0;i<SIZE;i++){
         for(j=0;j<SIZE;j++){
-            if(innerBoard[i][j]!=0 && ((k=JudgeFive(i,j))!=0))
-                break;
+            if(innerBoard[i][j]!=0 && JudgeFive(i,j))
+                return 1;
         }
     }
-    return k;
+    return 0;
 }
 
+//3个距离内有点
+int hasNeighbor(Point p){
+    for(int i=0;i<4;i++){
+        for(int j=-3;j<=3;j++){
+            if(j!=0){
+                Point np=nextPoint(p,i,j);
+                if(inBoard(np) && innerBoard[np.x][np.y]!=0)
+                    return 1;
+            }
 
-LL alphaBeta(int depth,LL alpha,LL beta,int player) {
-    if (depth == 0 || num==SIZE*SIZE)  {//负极大极小值算法
-        return wholeScore(id);
+        }
     }
-    if (isWin())//分出胜负
-        return PINF;
+    return 0;
+}
 
-    struct POINTS P = inspireFind(player);
+//负极大极小值搜索
+LL alphaBeta(int depth,LL alpha,LL beta,int player) {
+    if (depth == 0 || num==SIZE*SIZE) {
+        return wholeScore(player);
+    }
+    //if (isWin())//分出胜负
+        //return PINF or NINF;
 
-    for (int i = 0; i < LIST; i++) {
-        set(P.pos[i], player);//模拟落子
+    Move moves[SIZE*SIZE];
+    int length=inspireFind(moves,player);
+    if(length>LENGTH)
+        length=LENGTH;//初步剪枝
+
+    for (int i = 0; i < length; i++) {
+        set(moves[i].p, player);//模拟落子
         LL temp = -alphaBeta(depth - 1, -beta, -alpha, opp(player));
-        unSet(P.pos[i]);//还原落子
+        unSet(moves[i].p);//还原落子
         if (temp >= beta) {
             return beta;//剪枝
         }
         if (temp > alpha) {
             alpha = temp;
             if (depth == DEPTH) {//最高层用来找最佳落子
-                ai_x = P.pos[i].x;
-                ai_y = P.pos[i].y;
+                ai_x = moves[i].p.x;
+                ai_y = moves[i].p.y;
             }
         }
     }
     return alpha;
 }
 
+int inspireFind(Move *scoreBoard,int player){
+    int length=0;
+    for(int i=0;i<SIZE;i++){
+        for(int j=0;j<SIZE;j++){
+            if(innerBoard[i][j]==0) {
+                Point p = {i, j};
 
-
-struct POINTS inspireFind(int player){
-    static LL score[SIZE][SIZE];
-    struct POINTS bestPoints;
-    int i,j;
-    for(i=0;i<SIZE;i++) {
-        for (j = 0; j < SIZE; j++) {
-            score[i][j] = NINF;
-        }
-    }
-    for(i=0;i<SIZE;i++){
-        for(j=0;j<SIZE;j++){
-            if(innerBoard[i][j]!=0){
-                struct Point p={i,j};
-
-                for(int k=0;k<4;k++){
-                    for(int di=-3;di<=3;di++){//搜索相邻3个距离内可落子点
-                        struct Point np=nextPoint(p,k,di);
-                        if(inBoard(np) && score[np.x][np.y]==NINF && innerBoard[np.x][np.y]==0){
-                                innerBoard[np.x][np.y] = player;
-                                score[np.x][np.y] = wholeScore(player);
-                                innerBoard[np.x][np.y] = 0;
-                            }
-                        }
-
-                    }
+                if (hasNeighbor(p) && !forbiddenHand(p, player)) {
+                    set(p, player);
+                    scoreBoard[length].score = wholeScore(player);
+                    unSet(p);
+                    scoreBoard[length++].p = p;
                 }
             }
         }
+    }
+    shellSort(scoreBoard,length);
+    return length;
+}
 
-
-    for(int k=0;k<LIST;k++){
-        LL temp=NINF;
-        for(i=0;i<SIZE;i++){
-            for(j=0;j<SIZE;j++){
-                if(score[i][j]>temp){
-                    temp=score[i][j];
-                    struct Point p={i,j};
-                    bestPoints.pos[k]=p;
-                }
+void shellSort(Move *s,int len)
+{
+    int i,j,gap;
+    Move temp;
+    for (gap=len/2;gap>0;gap/=2)
+    {
+        for(i=gap;i<len;i+=1)
+        {
+            for(j=i-gap;j>=0 && s[j].score<s[j+gap].score;j-=gap)
+            {
+                temp = s[j+gap];
+                s[j+gap]=s[j];
+                s[j]=temp;
             }
         }
-        bestPoints.score[k]=temp;
-        score[bestPoints.pos[k].x][bestPoints.pos[k].y]=NINF;//清除以找到下一个最高分点的位置和分数
     }
-    return bestPoints;
 }

@@ -7,10 +7,10 @@
 #include <time.h>
 #define SIZE 15
 #define CHARSIZE 2//棋盘使用的是GBK编码，每一个中文字符占用2个字节。
-#define NINF -9223372036854775806
-#define PINF 9223372036854775806
+#define NINF -9223372036854775807
+#define PINF 9223372036854775807
 #define DEPTH 4 //深度(必须为偶数)
-#define LIST 24
+#define LENGTH 30
 
 typedef long long LL;
 typedef struct Point{
@@ -34,6 +34,11 @@ typedef struct Info{
     int dalive1; //眠1 10
     int dead1; //死1 5
 }Info;
+
+typedef struct Move{
+    Point p;
+    LL score;
+}Move;
 
 extern int innerBoard[SIZE][SIZE];
 extern char displayBoard[SIZE][SIZE*CHARSIZE+1];
@@ -64,8 +69,9 @@ LL singleScore(Point p,int player);
 LL wholeScore(int player);
 Info typeAnalysis(int length,int *left, int *right,int player);
 Info getInfo(Point p,int player);
-int forbiddenHand(Info info);
+int forbiddenHand(Point p,int player);
 
 LL alphaBeta(int depth,LL alpha,LL beta,int player);
-struct POINTS inspireFind(int player);
+int inspireFind(Move *s,int player);
+void shellSort(Move *s,int len);
 #endif

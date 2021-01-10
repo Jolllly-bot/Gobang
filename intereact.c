@@ -81,11 +81,9 @@ void Player(void)
     set(p,id);
     gameover=JudgeFive(p.x,p.y)* id;
 
-    if(id==1){//½ûÊÖÅĞ¶Ï
-        Info info=getInfo(p,id);
-        if(forbiddenHand(info))
-            gameover = 3;
-    }
+    if(forbiddenHand(p,id))//½ûÊÖ
+        gameover = 3;
+
     innerLayout();
     display();
 

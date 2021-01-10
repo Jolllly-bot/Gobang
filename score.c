@@ -65,15 +65,24 @@ LL singleScore(struct Point p,int player){
     Info info;
     info = getInfo(p,player);
 
-    score+= ( info.dalive4*5000 + info.dead4*1000
-             + info.alive3*10000 + info.dalive3*1000 + info.dead3*500
-             + info.alive2*1000 + info.dalive2*200 + info.dead2*50
-             + info.alive1*100 + info.dalive1*10 + info.dead1*5);
+    if(num<25){
+        score += (info.dalive4 * 1000 + info.dead4 * 500
+                  + info.alive3 * 10000 + info.dalive3 * 1000 + info.dead3 * 50
+                  + info.alive2 * 1000 + info.dalive2 * 100 + info.dead2 * 5
+                  + info.alive1 * 100 + info.dalive1 * 10 + info.dead1 * 1);
+    }else{
+        score += (info.alive4 * 100000 + info.dalive4 * 5000 + info.dead4 * 500
+                  + info.alive3 * 10000 + info.dalive3 * 1000 + info.dead3 * 50
+                  + info.alive2 * 1000 + info.dalive2 * 100 + info.dead2 * 5
+                  + info.alive1 * 100 + info.dalive1 * 10 + info.dead1 * 1);
+    }
 
-    if(info.win5>=1)
-        score+=1000000;
+
+
+    if(info.more >=1 || info.win5>=1)
+        score+=20000000;
     if(info.alive4 >= 1 || info.dalive4>=2 || (info.dalive4 >= 1 && info.alive3 >= 1) || info.alive3 >= 2)//±ÿ §
-        score+=10000;
+        score+=1000000;
 
     return score;
 }
@@ -155,27 +164,28 @@ Info typeAnalysis(int length,int *left, int *right,int player)
             (right[0] == 0 && right[1] == player && right[2] == player))
             temp.dalive4+=2;
         else if ((left[0] == 0 && left[1] == player && left[2] == player) ||
-            (right[0] == 0 && right[1] == player && right[2] == player))
+                 (right[0] == 0 && right[1] == player && right[2] == player))
             temp.dalive4++;
         else if (left[0] == 0 && right[0] == 0 &&
-                 ((left[1] == player && left[2] == 0) || (right[1] == player && right[2] == 0)))
+                 ((left[1] == player && left[2] == 0 ) ||
+                  (right[1] == player && right[2] == 0 )))
             temp.alive3++;
         else if ((left[0] == 0 && left[2] == 0 && left[1] == player) ||
                  (right[0] == 0 && right[2] == 0 && right[1] == player))
-            temp.dead3++;
+            temp.dalive3++;
         else if ((left[0] == 0 && right[0] == 0) &&
                  (left[1] == player || right[1] == player))
-            temp.dead3++;
+            temp.dalive3++;
         else if ((left[0] == 0 && left[1] == 0 && left[2] == player) ||
                  (right[0] == 0 && right[1] == 0 && right[2] == player))
-            temp.dead3++;
+            temp.dalive3++;
         else if ((left[0] == 0 && right[0] == 0 && right[1] == 0 && right[2] == 0) ||
                  (left[0] == 0 && left[1] == 0 && right[0] == 0 && right[1] == 0) ||
                  (left[0] == 0 && left[1] == 0 && left[2] == 0 && right[0] == 0))
             temp.alive2++;
         else if ((left[0] == 0 && left[1] == 0 && left[2] == 0) ||
                  (right[0] == 0 && right[1] == 0 && right[2] == 0))
-            temp.dead2++;
+            temp.dalive2++;
     }
     else if (length == 1) {
         if ((left[0] == 0 && left[1] == player && left[2] == player && left[3] == player) &&
@@ -189,39 +199,40 @@ Info typeAnalysis(int length,int *left, int *right,int player)
             temp.alive3++;
         else if ((left[0] == 0 && right[0] == 0) &&
                  ((left[1] == player && left[2] == player) || (right[1] == player && right[2] == player)))
-            temp.dead3++;
+            temp.dalive3++;
         else if ((left[0] == 0 && left[3] == 0 && left[1] == player && left[2] == player) ||
                  (right[0] == 0 && right[3] == 0 && right[1] == player && right[2] == player))
-            temp.dead3++;
+            temp.dalive3++;
         else if ((left[0] == 0 && left[1] == 0 && left[2] == player && left[3] == player) ||
                  (right[0] == 0 && right[1] == 0 && right[2] == player && right[3] == player))
-            temp.dead3++;
+            temp.dalive3++;
         else if ((left[0] == 0 && left[2] == 0 && left[1] == player && left[3] == player) ||
                  (right[0] == 0 && right[2] == 0 && right[1] == player && right[3] == player))
-            temp.dead3++;
-        else if ((left[0] == 0 && right[0] == 0 && right[2] == 0 && right[1] == player) && (left[1] == 0 || right[3] == 0))
-            temp.dalive2++;
+            temp.dalive3++;
+        else if ((left[0] == 0 && right[0] == 0 && right[2] == 0 && right[1] == player)
+                 && (left[1] == 0 || right[3] == 0))
+            temp.alive2++;
         else if ((right[0] == 0 && left[0] == 0 && left[2] == 0 && left[1] == player) &&
                  (right[1] == 0 || left[3] == 0))
-            temp.dalive2++;
+            temp.alive2++;
         else if ((left[0] == 0 && right[0] == 0 && right[1] == 0 && right[3] == 0 && right[2] == player) ||
                  (right[0] == 0 && left[0] == 0 && left[1] == 0 && left[3] == 0 && left[2] == player))
-            temp.dalive2++;
+            temp.alive2++;
         else if ((left[0] == 0 && left[2] == 0 && left[3] == 0 && left[1] == player) ||
                  (right[0] == 0 && right[2] == 0 && right[3] == 0 && right[1] == player))
-            temp.dead2++;
+            temp.dalive2++;
         else if ((left[0] == 0 && right[0] == 0 && right[1] == 0 && left[1] == player) ||
                  (right[0] == 0 && left[0] == 0 && left[1] == 0 && right[1] == player))
-            temp.dead2++;
+            temp.dalive2++;
         else if ((left[0] == 0 && left[1] == 0 && left[3] == 0 && left[2] == player) ||
                  (right[0] == 0 && right[1] == 0 && right[3] == 0 && right[2] == player))
-            temp.dead2++;
+            temp.dalive2++;
         else if ((left[0] == 0 && left[1] == 0 && right[0] == 0 && left[2] == player) ||
                  (right[0] == 0 && right[1] == 0 && left[0] == 0 && right[2] == player))
-            temp.dead2++;
+            temp.dalive2++;
         else if ((left[0] == 0 && left[1] == 0 && left[2] == 0 && left[3] == player) ||
                  (right[0] == 0 && right[1] == 0 && right[2] == 0 && right[3] == player))
-            temp.dead2++;
+            temp.dalive2++;
         else if (left[0] == 0 && right[0] == 0)
             temp.alive1++;
         else if (left[0] == 0 || right[0] == 0)

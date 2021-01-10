@@ -17,7 +17,7 @@ int isWin(){
 //3个距离内有点
 int hasNeighbor(Point p){
     for(int i=0;i<4;i++){
-        for(int j=-3;j<=3;j++){
+        for(int j=-2;j<=2;j++){
             if(j!=0){
                 Point np=nextPoint(p,i,j);
                 if(inBoard(np) && innerBoard[np.x][np.y]!=0)
@@ -31,16 +31,17 @@ int hasNeighbor(Point p){
 
 //负极大极小值搜索
 LL alphaBeta(int depth,LL alpha,LL beta,int player) {
+    if (isWin())//分出胜负
+        return wholeScore(player);
     if (depth == 0 || num==SIZE*SIZE) {
         return wholeScore(player);
     }
-    //if (isWin())//分出胜负
-        //return PINF or NINF;
 
-    Move moves[SIZE*SIZE];
-    int length=inspireFind(moves,player);
-    if(length>LENGTH)
-        length=LENGTH;//初步剪枝
+    LL before=wholeScore(player);
+    Move moves[200];//保守估计
+    int length=inspireFind(moves,player,before);
+    if(length>WIDTH)
+        length=WIDTH-rand()%3;//初步剪枝 加随机性
 
     for (int i = 0; i < length; i++) {
         set(moves[i].p, player);//模拟落子
@@ -60,7 +61,7 @@ LL alphaBeta(int depth,LL alpha,LL beta,int player) {
     return alpha;
 }
 
-int inspireFind(Move *scoreBoard,int player){
+int inspireFind(Move *scoreBoard,int player,LL before){
     int length=0;
     for(int i=0;i<SIZE;i++){
         for(int j=0;j<SIZE;j++){
@@ -69,7 +70,7 @@ int inspireFind(Move *scoreBoard,int player){
 
                 if (hasNeighbor(p) && !forbiddenHand(p, player)) {
                     set(p, player);
-                    scoreBoard[length].score = wholeScore(player);
+                    scoreBoard[length].score = wholeScore(player)-before;
                     unSet(p);
                     scoreBoard[length++].p = p;
                 }

@@ -11,52 +11,6 @@ int x_1=-1,y_1=-1;
 //后手上一次落子
 int x_2=-1,y_2=-1;
 
-void menu()
-{
-    int m;
-    printf("    ---GOBANG by Jolllly---\n");
-    printf("Select mode:\n");
-    printf("1 -pvp\n");
-    printf("2 -pve 玩家先手\n");
-    printf("3 -pve 玩家后手\n");
-    scanf("%d", &m);
-    switch (m)
-    {
-        case 1://pvp
-            display();
-            while(1){
-                Player();
-                if(JudgeDisplay()){
-                    break;
-                }
-            }break;
-        case 2://pve玩家先手
-            display();
-            while (1){
-                Player();
-                if(JudgeDisplay()){
-                    break;
-                }
-                Computer();
-                if(JudgeDisplay()){
-                    break;
-                }
-            }break;
-        case 3://pve玩家后手
-            while (1){
-                Computer();
-                if (JudgeDisplay()){
-                    break;
-                }
-                Player();
-                if(JudgeDisplay()){
-                    break;
-                }
-            }break;
-        default:
-            break;
-    }
-}
 
 //玩家回合
 void Player(void)
@@ -64,18 +18,18 @@ void Player(void)
     char c;
     int x;
     Point p;
-    printf("player%d输入坐标:",id);
+    printf("player%d请输入坐标:",id);
     scanf("%c %d",&c,&x);
-    scanf("%c %d",&c,&x);//一个迷惑的bug
+    cleanInput();
     p.x=15-x;
     p.y=c-'a';
 
     while(innerBoard[p.x][p.y]!=0 || !inBoard(p) ){
-            printf("请重新输入坐标:");
-            scanf("%c %d",&c,&x);
-            scanf("%c %d",&c,&x);//一个迷惑的bug
-            p.x=15-x;
-            p.y=c-'a';
+        printf("请重新输入坐标:");
+        scanf("%c %d",&c,&x);
+        cleanInput();
+        p.x=15-x;
+        p.y=c-'a';
     }
 
     set(p,id);
@@ -94,12 +48,9 @@ void Player(void)
 void Computer(void)
 {
     if(num==0){
-        srand(time(NULL));
-        int a=rand()%2;
-        int b=rand()%2;
-        ai_x=7-a;
-        ai_y=7-b;
-    }//随机开局
+        ai_x=7;
+        ai_y=7;
+    }//开局
     else
         alphaBeta(DEPTH,NINF,PINF,id);
 
@@ -110,6 +61,12 @@ void Computer(void)
     display();
     printf("电脑选择下在:%c%d\n",ai_y+'A',15-ai_x);
 
+}
+
+void cleanInput(void){
+    int c;
+    while((c=getchar())!=EOF && c!='\n')
+        ;
 }
 
 //落子函数
@@ -136,10 +93,7 @@ int inBoard(struct Point p){
 
 //对手
 int opp(int player){
-    if(player==1)
-        return 2;
-    else
-        return 1;
+    return (player==1)?2:1;
 }
 
 //判断五连
@@ -196,7 +150,55 @@ int JudgeDisplay(void)
         display();
         printf("    ----禁手！---\n");
         getchar();
-        return 0;//不结束避免判断错
+        return 0;
     }
     return 0;
+}
+
+void menu()
+{
+    int m;
+    printf("    ---GOBANG by Jolllly---\n");
+    printf("Select mode:\n");
+    printf("1 -pvp\n");
+    printf("2 -pve 玩家先手\n");
+    printf("3 -pve 玩家后手\n");
+    scanf("%d", &m);
+    cleanInput();//清空输入缓冲区
+    switch (m)
+    {
+        case 1://pvp
+            display();
+            while(1){
+                Player();
+                if(JudgeDisplay()){
+                    break;
+                }
+            }break;
+        case 2://pve玩家先手
+            display();
+            while (1){
+                Player();
+                if(JudgeDisplay()){
+                    break;
+                }
+                Computer();
+                if(JudgeDisplay()){
+                    break;
+                }
+            }break;
+        case 3://pve玩家后手
+            while (1){
+                Computer();
+                if (JudgeDisplay()){
+                    break;
+                }
+                Player();
+                if(JudgeDisplay()){
+                    break;
+                }
+            }break;
+        default:
+            break;
+    }
 }

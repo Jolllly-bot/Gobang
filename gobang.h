@@ -9,8 +9,8 @@
 #define CHARSIZE 2//棋盘使用的是GBK编码，每一个中文字符占用2个字节。
 #define NINF -9223372036854775807
 #define PINF 9223372036854775807
-#define DEPTH 4 //深度(必须为偶数)
-#define LENGTH 30
+#define DEPTH 4 //深度
+#define WIDTH 45
 
 typedef long long LL;
 typedef struct Point{
@@ -41,7 +41,6 @@ typedef struct Move{
 }Move;
 
 extern int innerBoard[SIZE][SIZE];
-extern char displayBoard[SIZE][SIZE*CHARSIZE+1];
 extern int id;
 extern int num;
 extern int ai_x,ai_y;
@@ -52,6 +51,7 @@ void innerLayout(void);//将innerBoard中记录的棋子位置，转化到displayBoard中
 void display(void);//显示棋盘格局
 void menu(void);
 
+void cleanInput(void);
 void set(Point p,int player);
 void unSet(Point p);
 int opp(int player);
@@ -72,6 +72,6 @@ Info getInfo(Point p,int player);
 int forbiddenHand(Point p,int player);
 
 LL alphaBeta(int depth,LL alpha,LL beta,int player);
-int inspireFind(Move *s,int player);
+int inspireFind(Move *s,int player,LL before);
 void shellSort(Move *s,int len);
 #endif

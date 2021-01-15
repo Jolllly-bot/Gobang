@@ -17,7 +17,7 @@
 
 #ifndef SIX
     #define DEPTH 4 //…Ó∂»
-    #define WIDTH 50
+    #define WIDTH 45
 #endif
 
 typedef long long LL;

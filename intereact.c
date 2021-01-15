@@ -61,8 +61,10 @@ void Computer(void)
         ai_y=7;
     }//¿ª¾Ö
     else{
+#ifndef NKILL
         kill=killSearch();
         if(!kill)
+#endif
             alphaBeta(DEPTH,NINF,PINF,id);
     }
 

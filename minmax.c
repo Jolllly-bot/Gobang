@@ -14,16 +14,18 @@ int isWin(){
     return 0;
 }
 
-//3个距离内有点
+//2个距离内有点
 int hasNeighbor(Point p){
+    int n=2;
+    if(num==1)
+        n=1;//开局贴近，只找一个距离
     for(int i=0;i<4;i++){
-        for(int j=-2;j<=2;j++){
+        for(int j=-n;j<=n;j++){
             if(j!=0){
                 Point np=nextPoint(p,i,j);
                 if(inBoard(np) && innerBoard[np.x][np.y]!=0)
                     return 1;
             }
-
         }
     }
     return 0;
@@ -105,8 +107,8 @@ void shellSort(Move *s,int len)
 
 //算杀最顶层
 int killSearch(void){
-    int depth=14;//算杀深度
-    Move kill[200];
+    int depth=12;//算杀深度
+    Move kill[100];
     int length=findComKill(kill);
     if(length==0)
         return 0;
@@ -131,7 +133,7 @@ int maxKill(int depth,Point p){
     if(depth==0)
         return 0;
 
-    Move kill[200];
+    Move kill[100];
     int length=findComKill(kill);
     if(length==0)
         return 0;
@@ -154,7 +156,7 @@ int minKill(int depth,Point p){
     if(depth==0)
         return 0;
 
-    Move kill[200];
+    Move kill[100];
     int length=findHumKill(kill);
     if(length==0)
         return 0;
@@ -179,7 +181,7 @@ int findComKill(Move *move){
                     set(p, id);
                     int score = singleScore(p,id);
                     unSet(p);
-                    if(score>3000){
+                    if(score>5000){
                         move[length].score=score;
                         move[length++].p = p;
                     }
@@ -206,7 +208,7 @@ int findHumKill(Move *move){
                         score += singleScore(p,id);
                         unSet(p);
                     }
-                    if(score>3000){
+                    if(score>5000){
                         move[length].score=score;
                         move[length++].p = p;
                     }

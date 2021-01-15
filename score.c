@@ -79,9 +79,9 @@ LL singleScore(struct Point p,int player){
 
 
     if(info.more >=1 || info.win5>=1)
-        score+=2000000000;
+        score+=20000000;
     if(info.alive4 >= 1 || info.dalive4>=2 || (info.dalive4 >= 1 && info.alive3 >= 1) || info.alive3 >= 2)//±ÿ §
-        score+=10000000;
+        score+=1000000;
 
     return score;
 }

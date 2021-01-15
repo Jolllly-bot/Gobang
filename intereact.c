@@ -55,12 +55,16 @@ void Player(void)
 //电脑回合
 void Computer(void)
 {
+    int kill=0;
     if(num==0){
         ai_x=7;
         ai_y=7;
     }//开局
-    else
-        alphaBeta(DEPTH,NINF,PINF,id);
+    else{
+        kill=killSearch();
+        if(!kill)
+            alphaBeta(DEPTH,NINF,PINF,id);
+    }
 
     Point p={ai_x,ai_y};
     set(p,id);
@@ -68,6 +72,8 @@ void Computer(void)
     innerLayout();
     changeCurrent(p,id);
     display();
+    if(kill)
+        printf("kill found!\n");
     printf("电脑选择下在:%c%d\n",ai_y+'A',15-ai_x);
 
 }

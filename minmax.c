@@ -102,3 +102,118 @@ void shellSort(Move *s,int len)
         }
     }
 }
+
+//算杀最顶层
+int killSearch(void){
+    int depth=14;//算杀深度
+    Move kill[200];
+    int length=findComKill(kill);
+    if(length==0)
+        return 0;
+    for (int i=0;i<length; i++){
+        set(kill[i].p,id);
+        int killed=minKill(depth-1,kill[i].p);
+        unSet(kill[i].p);
+        if(killed){
+            ai_x=kill[i].p.x;
+            ai_y=kill[i].p.y;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+//极大算杀，电脑层
+int maxKill(int depth,Point p){
+    if(JudgeFive(p.x,p.y)){
+        return 0;
+    }
+    if(depth==0)
+        return 0;
+
+    Move kill[200];
+    int length=findComKill(kill);
+    if(length==0)
+        return 0;
+    for (int i=0;i<length; i++){
+        set(kill[i].p,id);
+        int killed=minKill(depth-1,kill[i].p);
+        unSet(kill[i].p);
+        if(killed){
+            return 1;
+        }
+    }
+    return 0;
+}
+
+//极小算杀，玩家层
+int minKill(int depth,Point p){
+    if(JudgeFive(p.x,p.y)){
+        return 1;//电脑下赢了
+    }
+    if(depth==0)
+        return 0;
+
+    Move kill[200];
+    int length=findHumKill(kill);
+    if(length==0)
+        return 0;
+    for (int i=0;i<length; i++){
+        set(kill[i].p,opp(id));
+        int killed=maxKill(depth-1,kill[i].p);
+        unSet(kill[i].p);
+        if(!killed){
+            return 0;
+        }
+    }
+    return 1;//没防住
+}
+
+int findComKill(Move *move){
+    int length=0;
+    for(int i=0;i<SIZE;i++){
+        for(int j=0;j<SIZE;j++){
+            if(innerBoard[i][j]==0) {
+                Point p = {i, j};
+                if (hasNeighbor(p) && !forbiddenHand(p,id)) {
+                    set(p, id);
+                    int score = singleScore(p,id);
+                    unSet(p);
+                    if(score>3000){
+                        move[length].score=score;
+                        move[length++].p = p;
+                    }
+                }
+            }
+        }
+    }
+    shellSort(move,length);
+    return length;
+}
+
+int findHumKill(Move *move){
+    int length=0;
+    for(int i=0;i<SIZE;i++){
+        for(int j=0;j<SIZE;j++){
+            if(innerBoard[i][j]==0) {
+                Point p = {i, j};
+                if (hasNeighbor(p) && !forbiddenHand(p,opp(id))) {
+                    set(p, opp(id));//玩家方杀点
+                    int score = singleScore(p,opp(id));
+                    unSet(p);
+                    if(!forbiddenHand(p,id)){
+                        set(p, id);//电脑方杀点
+                        score += singleScore(p,id);
+                        unSet(p);
+                    }
+                    if(score>3000){
+                        move[length].score=score;
+                        move[length++].p = p;
+                    }
+                }
+            }
+        }
+    }
+    shellSort(move,length);
+    return length;
+}

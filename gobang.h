@@ -83,4 +83,9 @@ int forbiddenHand(Point p,int player);
 LL alphaBeta(int depth,LL alpha,LL beta,int player);
 int inspireFind(Move *s,int player);
 void shellSort(Move *s,int len);
+int killSearch(void);
+int maxKill(int depth,Point p);
+int minKill(int depth,Point p);
+int findComKill(Move *move);
+int findHumKill(Move *move);
 #endif

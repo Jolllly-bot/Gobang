@@ -66,7 +66,7 @@ LL singleScore(struct Point p,int player){
     info = getInfo(p,player);
 
     if(num<25){
-        score += (info.alive4 * 100000 + info.dalive4 * 3000 + info.dead4 * 500
+        score += (info.alive4 * 100000 + info.dalive4 * 2000 + info.dead4 * 500
                   + info.alive3 * 15000 + info.dalive3 * 1000 + info.dead3 * 50
                   + info.alive2 * 1000 + info.dalive2 * 100 + info.dead2 * 5
                   + info.alive1 * 100 + info.dalive1 * 10 + info.dead1 * 1);

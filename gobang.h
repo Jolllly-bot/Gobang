@@ -9,8 +9,16 @@
 #define CHARSIZE 2//棋盘使用的是GBK编码，每一个中文字符占用2个字节。
 #define NINF -9223372036854775807
 #define PINF 9223372036854775807
-#define DEPTH 4 //深度
-#define WIDTH 50
+
+#ifdef SIX
+    #define DEPTH 6 //深度
+    #define WIDTH 23
+#endif
+
+#ifndef SIX
+    #define DEPTH 4 //深度
+    #define WIDTH 50
+#endif
 
 typedef long long LL;
 typedef struct Point{

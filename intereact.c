@@ -17,7 +17,7 @@ void Player(void)
     int x=0;
     Point p={-1,-1};
 
-    printf("player%d请输入坐标（小写字母+数字）:",id);
+    printf("player%d请输入坐标:",id);
 
     while(1){
         scanf("%c %d",&c,&x);
@@ -25,8 +25,9 @@ void Player(void)
         p.x=15-x;
         p.y=c-'a';
         if(c=='r'){//悔棋
-            innerBoard[lp.x][lp.y]=0;
-            innerBoard[ai_x][ai_y]=0;
+            Point aip={ai_x,ai_y};
+            unSet(lp);
+            unSet(aip);
             innerLayout();
             display();
             printf("请重新输入坐标:");
@@ -95,7 +96,8 @@ void unSet(Point p)
 int inBoard(struct Point p){
     if(p.x>=0 && p.x<SIZE && p.y>=0 && p.y<SIZE)
         return 1;
-    else return 0;
+    else
+        return 0;
 }
 
 
@@ -170,7 +172,8 @@ void menu()
     printf("Select mode:\n");
     printf("1 -pvp 人人对战\n");
     printf("2 -pve 玩家先手（执黑）\n");
-    printf("3 -pve 玩家后手（执白）\n");
+    printf("3 -pve 玩家后手（执白）\n\n");
+    printf(">>坐标输入格式：小写字母 数字\n");
     scanf("%d", &m);
     cleanInput();//清空输入缓冲区
     switch (m)
@@ -192,14 +195,15 @@ void menu()
                 }
                 Computer();
                 if(JudgeDisplay()){
-                    break;
+                    //break;
+                    //玩家还可以悔棋
                 }
             }break;
         case 3://pve玩家后手
             while (1){
                 Computer();
                 if (JudgeDisplay()){
-                    break;
+                    //break;
                 }
                 Player();
                 if(JudgeDisplay()){

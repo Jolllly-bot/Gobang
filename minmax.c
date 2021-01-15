@@ -69,11 +69,11 @@ int inspireFind(Move *scoreBoard,int player){
 
                 if (hasNeighbor(p) && !forbiddenHand(p, player)) {
                     set(p, player);
-                    scoreBoard[length].score = singleScore(p,player);
+                    scoreBoard[length].score = singleScore(p,player);//进攻点
                     unSet(p);
                     if(!forbiddenHand(p,opp(player))){
                         set(p,opp(player));
-                        scoreBoard[length].score += singleScore(p,opp(player));//平衡攻防
+                        scoreBoard[length].score += singleScore(p,opp(player));//防守点
                         unSet(p);
                     }
                     scoreBoard[length++].p = p;

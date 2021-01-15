@@ -10,7 +10,7 @@
 #define NINF -9223372036854775807
 #define PINF 9223372036854775807
 #define DEPTH 4 //深度
-#define WIDTH 45
+#define WIDTH 50
 
 typedef long long LL;
 typedef struct Point{
@@ -49,6 +49,7 @@ extern int ai_x,ai_y;
 void initRecordBoard(void);//初始化一个空棋盘格局
 void innerLayout(void);//将innerBoard中记录的棋子位置，转化到displayBoard中
 void display(void);//显示棋盘格局
+void changeCurrent(Point p,int player);
 void menu(void);
 
 void cleanInput(void);
@@ -72,6 +73,6 @@ Info getInfo(Point p,int player);
 int forbiddenHand(Point p,int player);
 
 LL alphaBeta(int depth,LL alpha,LL beta,int player);
-int inspireFind(Move *s,int player,LL before);
+int inspireFind(Move *s,int player);
 void shellSort(Move *s,int len);
 #endif

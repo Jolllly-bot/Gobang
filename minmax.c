@@ -37,9 +37,8 @@ LL alphaBeta(int depth,LL alpha,LL beta,int player) {
         return wholeScore(player);
     }
 
-    LL before=wholeScore(player);
-    Move moves[200];//保守估计
-    int length=inspireFind(moves,player,before);
+    Move moves[224];
+    int length=inspireFind(moves,player);
     if(length>WIDTH)
         length=WIDTH-rand()%3;//初步剪枝 加随机性
 
@@ -61,7 +60,7 @@ LL alphaBeta(int depth,LL alpha,LL beta,int player) {
     return alpha;
 }
 
-int inspireFind(Move *scoreBoard,int player,LL before){
+int inspireFind(Move *scoreBoard,int player){
     int length=0;
     for(int i=0;i<SIZE;i++){
         for(int j=0;j<SIZE;j++){
@@ -70,8 +69,13 @@ int inspireFind(Move *scoreBoard,int player,LL before){
 
                 if (hasNeighbor(p) && !forbiddenHand(p, player)) {
                     set(p, player);
-                    scoreBoard[length].score = wholeScore(player)-before;
+                    scoreBoard[length].score = singleScore(p,player);
                     unSet(p);
+                    if(!forbiddenHand(p,opp(player))){
+                        set(p,opp(player));
+                        scoreBoard[length].score += singleScore(p,opp(player));//平衡攻防
+                        unSet(p);
+                    }
                     scoreBoard[length++].p = p;
                 }
             }

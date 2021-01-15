@@ -6,40 +6,47 @@ int num=0;
 int gameover=0;
 //先后手标示 1:先 2：后
 int id=1;
-//先手上一次落子
-int x_1=-1,y_1=-1;
-//后手上一次落子
-int x_2=-1,y_2=-1;
+//上一次落子
+Point lp;
 
 
 //玩家回合
 void Player(void)
 {
-    char c;
-    int x;
-    Point p;
-    printf("player%d请输入坐标:",id);
-    scanf("%c %d",&c,&x);
-    cleanInput();
-    p.x=15-x;
-    p.y=c-'a';
+    char c=0;
+    int x=0;
+    Point p={-1,-1};
 
-    while(innerBoard[p.x][p.y]!=0 || !inBoard(p) ){
-        printf("请重新输入坐标:");
+    printf("player%d请输入坐标（小写字母+数字）:",id);
+
+    while(1){
         scanf("%c %d",&c,&x);
         cleanInput();
         p.x=15-x;
         p.y=c-'a';
+        if(c=='r'){//悔棋
+            innerBoard[lp.x][lp.y]=0;
+            innerBoard[ai_x][ai_y]=0;
+            innerLayout();
+            display();
+            printf("请重新输入坐标:");
+            continue;
+        }else if(innerBoard[p.x][p.y]!=0 || !inBoard(p) ) {//非法输入
+            printf("请重新输入坐标:");
+            continue;
+        }else{//落子
+            set(p,id);
+            lp=p;
+            gameover=JudgeFive(p.x,p.y)* id;
+            if(forbiddenHand(p,id))//禁手
+                gameover = 3;
+
+            innerLayout();
+            changeCurrent(p,id);
+            display();
+            break;
+        }
     }
-
-    set(p,id);
-    gameover=JudgeFive(p.x,p.y)* id;
-
-    if(forbiddenHand(p,id))//禁手
-        gameover = 3;
-
-    innerLayout();
-    display();
 
 
 }
@@ -58,6 +65,7 @@ void Computer(void)
     set(p,id);
     gameover=JudgeFive(ai_x,ai_y)* id;
     innerLayout();
+    changeCurrent(p,id);
     display();
     printf("电脑选择下在:%c%d\n",ai_y+'A',15-ai_x);
 
@@ -160,9 +168,9 @@ void menu()
     int m;
     printf("    ---GOBANG by Jolllly---\n");
     printf("Select mode:\n");
-    printf("1 -pvp\n");
-    printf("2 -pve 玩家先手\n");
-    printf("3 -pve 玩家后手\n");
+    printf("1 -pvp 人人对战\n");
+    printf("2 -pve 玩家先手（执黑）\n");
+    printf("3 -pve 玩家后手（执白）\n");
     scanf("%d", &m);
     cleanInput();//清空输入缓冲区
     switch (m)

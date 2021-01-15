@@ -66,8 +66,8 @@ LL singleScore(struct Point p,int player){
     info = getInfo(p,player);
 
     if(num<25){
-        score += (info.dalive4 * 1000 + info.dead4 * 500
-                  + info.alive3 * 10000 + info.dalive3 * 1000 + info.dead3 * 50
+        score += (info.alive4 * 100000 + info.dalive4 * 3000 + info.dead4 * 500
+                  + info.alive3 * 15000 + info.dalive3 * 1000 + info.dead3 * 50
                   + info.alive2 * 1000 + info.dalive2 * 100 + info.dead2 * 5
                   + info.alive1 * 100 + info.dalive1 * 10 + info.dead1 * 1);
     }else{
@@ -80,9 +80,9 @@ LL singleScore(struct Point p,int player){
 
 
     if(info.more >=1 || info.win5>=1)
-        score+=20000000;
+        score+=2000000000;
     if(info.alive4 >= 1 || info.dalive4>=2 || (info.dalive4 >= 1 && info.alive3 >= 1) || info.alive3 >= 2)//±ÿ §
-        score+=1000000;
+        score+=10000000;
 
     return score;
 }

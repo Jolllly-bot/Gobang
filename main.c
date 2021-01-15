@@ -87,3 +87,13 @@ void display(void){
         printf("%2c",'A'+i);
     printf("\n");
 } 
+
+void changeCurrent(Point p,int player){
+    if (player==1){
+        displayBoard[p.x][CHARSIZE*p.y]=play1CurrentPic[0];
+        displayBoard[p.x][CHARSIZE*p.y+1]=play1CurrentPic[1];
+    }else{
+        displayBoard[p.x][CHARSIZE*p.y]=play2CurrentPic[0];
+        displayBoard[p.x][CHARSIZE*p.y+1]=play2CurrentPic[1];
+    }
+}

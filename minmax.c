@@ -16,15 +16,24 @@ int isWin(){
 
 //2个距离内有点
 int hasNeighbor(Point p){
-    int n=2;
-    if(num==1)
-        n=1;//开局贴近，只找一个距离
-    for(int i=0;i<4;i++){
-        for(int j=-n;j<=n;j++){
-            if(j!=0){
-                Point np=nextPoint(p,i,j);
-                if(inBoard(np) && innerBoard[np.x][np.y]!=0)
-                    return 1;
+    if(num==1 || num==2){//开局第二第三个子只找黑子九宫格
+        for(int i=0;i<4;i++){
+            for(int j=-1;j<=1;j++){
+                if(j!=0){
+                    Point np=nextPoint(p,i,j);
+                    if(inBoard(np) && innerBoard[np.x][np.y]==1)
+                        return 1;
+                }
+            }
+        }
+    }else{
+        for(int i=0;i<4;i++){
+            for(int j=-2;j<=2;j++){
+                if(j!=0){
+                    Point np=nextPoint(p,i,j);
+                    if(inBoard(np) && innerBoard[np.x][np.y]!=0)
+                        return 1;
+                }
             }
         }
     }
@@ -70,13 +79,9 @@ int inspireFind(Move *scoreBoard,int player){
                 Point p = {i, j};
 
                 if (hasNeighbor(p) && !forbiddenHand(p, player)) {
-                    set(p, player);
                     scoreBoard[length].score = singleScore(p,player);//进攻点
-                    unSet(p);
                     if(!forbiddenHand(p,opp(player))){
-                        set(p,opp(player));
                         scoreBoard[length].score += singleScore(p,opp(player));//防守点
-                        unSet(p);
                     }
                     scoreBoard[length++].p = p;
                 }
@@ -112,6 +117,8 @@ int killSearch(void){
     int length=findComKill(kill);
     if(length==0)
         return 0;
+    if (length>10)
+        length=10;
     for (int i=0;i<length; i++){
         set(kill[i].p,id);
         int killed=minKill(depth-1,kill[i].p);
@@ -200,13 +207,9 @@ int findHumKill(Move *move){
             if(innerBoard[i][j]==0) {
                 Point p = {i, j};
                 if (hasNeighbor(p) && !forbiddenHand(p,opp(id))) {
-                    set(p, opp(id));//玩家方杀点
-                    int score = singleScore(p,opp(id));
-                    unSet(p);
+                    int score = singleScore(p,opp(id));//玩家方杀点
                     if(!forbiddenHand(p,id)){
-                        set(p, id);//电脑方杀点
-                        score += singleScore(p,id);
-                        unSet(p);
+                        score += singleScore(p,id);//电脑方杀点
                     }
                     if(score>5000){
                         move[length].score=score;

@@ -75,7 +75,7 @@ void Computer(void)
     changeCurrent(p,id);
     display();
     if(kill)
-        printf("kill found!\n");
+        printf(";-)\n");
     printf("电脑选择下在:%c%d\n",ai_y+'A',15-ai_x);
 
 }

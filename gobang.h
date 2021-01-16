@@ -45,7 +45,7 @@ typedef struct Info{
 
 typedef struct Move{
     Point p;
-    LL score;
+    int score;
 }Move;
 
 extern int innerBoard[SIZE][SIZE];

@@ -118,7 +118,7 @@ int killSearch(void){
     if(length==0)
         return 0;
     if (length>10)
-        length=10;
+        depth=8;//避免杀点过多超时
     for (int i=0;i<length; i++){
         set(kill[i].p,id);
         int killed=minKill(depth-1,kill[i].p);

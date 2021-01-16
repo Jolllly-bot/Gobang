@@ -60,13 +60,19 @@ void Computer(void)
         ai_x=7;
         ai_y=7;
     }//¿ª¾Ö
-    else{
+    else {
 #ifndef NKILL
-        kill=killSearch();
-        if(!kill)
-#endif
-            alphaBeta(DEPTH,NINF,PINF,id);
+        kill = killSearch();
+        if (!kill) {
+            printf(":(\n");
+            alphaBeta(DEPTH, NINF, PINF, id);
+        }
     }
+#endif
+#ifdef NKILL
+        alphaBeta(DEPTH, NINF, PINF, id);
+    }
+#endif
 
     Point p={ai_x,ai_y};
     set(p,id);

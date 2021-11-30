@@ -23,10 +23,10 @@ char EmptyBoard[SIZE][SIZE*CHARSIZE+1] =
 char displayBoard[SIZE][SIZE*CHARSIZE+1];
  
 char play1Pic[]="●";//黑棋子;
-char play1CurrentPic[]="▲"; 
+char play1CurrentPic[]="▲"; //黑棋子最后落子
 
 char play2Pic[]="◎";//白棋子;
-char play2CurrentPic[]="△";
+char play2CurrentPic[]="△";//白棋子最后落子
 
 //此数组用于记录当前的棋盘的格局 
 int innerBoard[SIZE][SIZE];
@@ -43,7 +43,7 @@ int main()
     return 0;
 }
 
-
+//初始化一个空棋盘格局
 void initRecordBoard(void){
     int i,j;
     for(i=0;i<SIZE;i++)
@@ -51,6 +51,7 @@ void initRecordBoard(void){
             innerBoard[i][j]=0;
 }
 
+//将innerBoard中记录的棋子位置，转化到displayBoard中
 void innerLayout(void){
 	//第一步：将EmptyBoard中记录的空棋盘，复制到displayBoard中
     int i,j;
@@ -72,10 +73,9 @@ void innerLayout(void){
             }
         }
     }
- 
 }
 
-
+//显示棋盘格局
 void display(void){
 	int i;
 	system("clear");   //清屏  
@@ -88,11 +88,12 @@ void display(void){
     printf("\n");
 } 
 
+//改变最后落子的形状
 void changeCurrent(Point p,int player){
     if (player==1){
         displayBoard[p.x][CHARSIZE*p.y]=play1CurrentPic[0];
         displayBoard[p.x][CHARSIZE*p.y+1]=play1CurrentPic[1];
-    }else{
+    }else if(player==2){
         displayBoard[p.x][CHARSIZE*p.y]=play2CurrentPic[0];
         displayBoard[p.x][CHARSIZE*p.y+1]=play2CurrentPic[1];
     }

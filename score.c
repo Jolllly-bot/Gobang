@@ -1,7 +1,7 @@
 #include "gobang.h"
 
 
-//返回d方向上相邻di距离的点
+//返回p点d方向上相邻di距离的点
 struct Point nextPoint(struct Point p,int d,int di){
     const int direction[4][2]={{1,0},{0,1},{1,1},{1,-1}};
     struct Point np;
@@ -10,18 +10,19 @@ struct Point nextPoint(struct Point p,int d,int di){
     return np;
 }
 
-
+//获取p点d方向延伸的信息
 void getBoundary(struct Point p,int d,int *s,int way,int player){
     for (int i = 0; i < 4; i++)
     {
         struct Point np = nextPoint(p, d, way*i);
-        if (inBoard(np))
+        if (inBoard(np))//在棋盘内
             s[i] = innerBoard[np.x][np.y];
-        else //边界
+        else //遇到边界 视为对方子
             s[i] = opp(player);
     }
 }
 
+//获取p点连子的长度和两边延伸4子的信息
 int getLength(Point p,int d,int *left,int *right,int player)
 {
     int i;
@@ -47,13 +48,14 @@ int getLength(Point p,int d,int *left,int *right,int player)
     return count;
 }
 
+//禁手判断
 int forbiddenHand(Point p,int player){
     if(player==1){
         Info info=getInfo(p,player);
-        if(info.more>0){
+        if(info.more>0){//长连禁手
             return 1;
         }
-        if(info.win5==0 && (info.alive3>=2 || info.alive4+info.dalive4>=2)) {
+        if(info.win5==0 && (info.alive3>=2 || info.alive4+info.dalive4>=2)) {//三三 四四及组合禁手
             return 1;
         }
     }
@@ -62,11 +64,11 @@ int forbiddenHand(Point p,int player){
 
 
 
-LL singleScore(struct Point p,int player){
-    LL score=0;
+int singleScore(struct Point p,int player){
+    int score=0;
     Info info= getInfo(p,player);
 
-    if(num<25){
+    if(num<25){//前几步少冲4
         score += (info.alive4 * 100000 + info.dalive4 * 2000 + info.dead4 * 500
                   + info.alive3 * 15000 + info.dalive3 * 1000 + info.dead3 * 50
                   + info.alive2 * 1000 + info.dalive2 * 100 + info.dead2 * 5
@@ -86,23 +88,24 @@ LL singleScore(struct Point p,int player){
     return score;
 }
 
+//棋盘整体局面分
 LL wholeScore(int player){
     int hum=opp(player);
     LL comScore=0,humScore=0;
     for(int i=0;i<SIZE;i++){
         for(int j=0;j<SIZE;j++) {
             struct Point p={i,j};
-            if(innerBoard[i][j]==player)
+            if(innerBoard[i][j]==player)//己方落子的单点分相加
                 comScore += singleScore(p,player);
-            else if(innerBoard[i][j]==hum)
+            else if(innerBoard[i][j]==hum)//对方落子的单点分相加
                 humScore += singleScore(p,hum);
         }
     }
-    return comScore-humScore;
+    return comScore-humScore;//己方总分减对方总分 得到当前对己方来说的局势分
 }
 
+//获取p点周围的棋型
 Info getInfo(struct Point p,int player){
-
     Info temp = {0};
     for(int i=0;i<4;i++){
         Info info[4];
@@ -128,6 +131,7 @@ Info getInfo(struct Point p,int player){
     return temp;
 }
 
+//根据连子数目和边缘信息判断棋型
 Info typeAnalysis(int length,int *left, int *right,int player)
 {
     Info temp={0};

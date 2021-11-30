@@ -6,7 +6,7 @@ int num=0;
 int gameover=0;
 //先后手标示 1:先 2：后
 int id=1;
-//上一次落子
+//玩家上一次落子
 Point lp;
 
 
@@ -18,27 +18,29 @@ void Player(void)
     Point p={-1,-1};
 
     printf("player%d请输入坐标:",id);
-
     while(1){
         scanf("%c %d",&c,&x);
-        cleanInput();
+        cleanInput();//避免下次读取到不需要的内容
         p.x=15-x;
         p.y=c-'a';
-        if(c=='r'){//悔棋
+        //悔棋
+        if(c=='r'){
             Point aip={ai_x,ai_y};
-            unSet(lp);
-            unSet(aip);
+            unSet(lp);//撤回人类上一步落子
+            unSet(aip);//撤回电脑落子
             innerLayout();
             display();
             printf("请重新输入坐标:");
             continue;
-        }else if(innerBoard[p.x][p.y]!=0 || !inBoard(p) ) {//非法输入
+        //落子点非空或越界
+        }else if(innerBoard[p.x][p.y]!=0 || !inBoard(p) ) {
             printf("请重新输入坐标:");
             continue;
-        }else{//落子
+        //合法落子
+        }else{
             set(p,id);
-            lp=p;
-            gameover=JudgeFive(p.x,p.y)* id;
+            lp=p;//记录落子
+            gameover=JudgeFive(p.x,p.y)* id;//判断游戏是否结束
             if(forbiddenHand(p,id))//禁手
                 gameover = 3;
 
@@ -48,29 +50,27 @@ void Player(void)
             break;
         }
     }
-
-
 }
 
 //电脑回合
 void Computer(void)
 {
-    int kill=0;
+    int kill=0;//算杀标示
     if(num==0){
         ai_x=7;
         ai_y=7;
     }//开局
     else {
 #ifndef NKILL
-        kill = killSearch();
-        if (!kill) {
+        kill = killSearch();//算杀
+        if (!kill) {//算杀失败 采取极大极小搜索
             printf(":(\n");
-            alphaBeta(DEPTH, NINF, PINF, id);
+            minmax(DEPTH, NINF, PINF, id);
         }
     }
 #endif
 #ifdef NKILL
-        alphaBeta(DEPTH, NINF, PINF, id);
+        minmax(DEPTH, NINF, PINF, id);
     }
 #endif
 
@@ -86,6 +86,7 @@ void Computer(void)
 
 }
 
+//清空标准输入缓冲区
 void cleanInput(void){
     int c;
     while((c=getchar())!=EOF && c!='\n')
@@ -93,20 +94,18 @@ void cleanInput(void){
 }
 
 //落子函数
-void set(struct Point p,int player)
-{
+void set(struct Point p,int player){
     innerBoard[p.x][p.y]=player;
     num++;
 }
 
 //取消落子
-void unSet(Point p)
-{
+void unSet(Point p){
     innerBoard[p.x][p.y]=0;
     num--;
 }
 
-//在棋盘内没有越界
+//p在棋盘内没有越界
 int inBoard(struct Point p){
     if(p.x>=0 && p.x<SIZE && p.y>=0 && p.y<SIZE)
         return 1;
@@ -115,26 +114,25 @@ int inBoard(struct Point p){
 }
 
 
-//对手
+//获取对手id
 int opp(int player){
     return (player==1)?2:1;
 }
 
-//判断五连
+//判断坐标xy周围是否有五连
 int JudgeFive(int x, int y)
 {
     int i, j, k;
     const int direction[4][2]={{1,0},{0,1},{1,1},{1,-1}};//表示横竖加斜四个方向
     for(i=0;i<4;++i)
     {
-        const int d[2]={-1,1};
+        const int d[2]={-1,1};//表示左右两个方向
         int count=1;
         for(j=0;j<2;++j){
             for(k=1;k<=4;++k){
-                int row=x+k*d[j]*direction[i][0];
-                int col=y+k*d[j]*direction[i][1];
-                if( row>=0 && row<SIZE &&
-                    col>=0 && col<SIZE &&
+                int row=x+k*d[j]*direction[i][0];//行号
+                int col=y+k*d[j]*direction[i][1];//列号
+                if( row>=0 && row<SIZE && col>=0 && col<SIZE &&
                     innerBoard[x][y] == innerBoard[row][col])
                     count++;
                 else
@@ -150,7 +148,7 @@ int JudgeFive(int x, int y)
 //输出游戏结果
 int JudgeDisplay(void)
 {
-    id=opp(id);//交换玩家
+    id=opp(id);//改变先后手标示 交换玩家
     if(num == SIZE*SIZE)
     {
         display();
@@ -192,7 +190,7 @@ void menu()
     cleanInput();//清空输入缓冲区
     switch (m)
     {
-        case 1://pvp
+        case 1://pvp 人人对战
             display();
             while(1){
                 Player();
@@ -210,7 +208,7 @@ void menu()
                 Computer();
                 if(JudgeDisplay()){
                     //break;
-                    //玩家还可以悔棋
+                    //不break因为玩家还可以悔棋
                 }
             }break;
         case 3://pve玩家后手

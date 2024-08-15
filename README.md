@@ -1,5 +1,45 @@
 # Gobang
 
+### Introduction
+This is a final project for the C programming course at UCAS during my freshman year. It features a Gobang AI that uses Minimax search, Alpha-Beta pruning, and move-killing techniques. 
+
+Looking back, many of the implementations and coding practices seem quite immature, but I'm still proud that I taught my computer to play Gobang and surpass myself ;) By the way, it also clinched first place in the final competition. I’d say that’s a decent return on my sleep-deprived investment.
+
+### Usage Instructions
+1. Compile the code:
+
+```bash
+gcc -o gobang main.c minmax.c interact.c score.c
+```
+
+Add `-D NKILL` flag to enable move-killing.
+Add `-D SIX` flag to set the search depth to six layers (note: this will be slow).
+
+2. Run the game:
+
+```bash
+./gobang
+```
+
+- Choose the game mode:
+
+1: Player vs Player
+2: Player vs Computer (computer plays second)
+3: Player vs Computer (computer plays first)
+
+- Making a move:
+
+Enter a lowercase letter followed by a number.
+
+- Undo the last move:
+
+Press r (only one undo is allowed).
+
+
+### Contributing
+Fork the repository. Create a new branch. Commit your code. Open a Pull Request.
+If you encounter any bugs, feel free to open an issue, although there's a good chance I'll be too lazy to fix it.
+
 ### 介绍
 
 UCAS C程序设计与分析大作业，采用极大极小值搜索，Αlpha-beta剪枝，带算杀的五子棋AI，建议谨慎参考。
